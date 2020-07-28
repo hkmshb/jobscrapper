@@ -40,9 +40,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = get_env_value('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(get_env_value('DEBUG', False))
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = [ *get_env_value('ALLOWED_HOSTS', '').split(',') ]
 
 
 # Application definition
