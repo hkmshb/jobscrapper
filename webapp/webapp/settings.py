@@ -12,6 +12,23 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
+# helper function for pulling env var values
+def get_env_value(var_name, default_value = None):
+    try:
+        value = os.environ[var_name]
+        if not value and default_value:
+            return default_value
+
+        return value
+    except KeyError:
+        if default_value:
+            return default_value
+
+        errmsg = f'Set the {var_name} environment variable'
+        raise ValueError(errmsg)
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,12 +37,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'v_dd&yj-tn(1e9-c^^#_@pvm5lh-bbcwhw5da*v9l0k(f_6bq^'
+SECRET_KEY = get_env_value('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -75,8 +92,12 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': get_env_value('DJPGP_DBNAME'),
+        'USER': get_env_value('DJPGP_DBUSER'),
+        'PASSWORD': get_env_value('DJPGP_DBPASS'),
+        'HOST': get_env_value('DJPGP_DBHOST'),
+        'PORT': get_env_value('DJPGP_DBPORT', '5432'),
     }
 }
 

@@ -139,3 +139,5 @@ cython_debug/
 
 # misc
 *.bak
+.env.*
+
