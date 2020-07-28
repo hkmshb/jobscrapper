@@ -93,11 +93,11 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': get_env_value('DJPGP_DBNAME'),
-        'USER': get_env_value('DJPGP_DBUSER'),
-        'PASSWORD': get_env_value('DJPGP_DBPASS'),
-        'HOST': get_env_value('DJPGP_DBHOST'),
-        'PORT': get_env_value('DJPGP_DBPORT', '5432'),
+        'NAME': get_env_value('DJAPP_DBNAME'),
+        'USER': get_env_value('DJAPP_DBUSER'),
+        'PASSWORD': get_env_value('DJAPP_DBPASS'),
+        'HOST': get_env_value('DJAPP_DBHOST'),
+        'PORT': get_env_value('DJAPP_DBPORT', '5432'),
     }
 }
 
