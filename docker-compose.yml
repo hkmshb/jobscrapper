@@ -19,10 +19,6 @@ services:
       PGUSER: ${ADMIN_DBUSER}
       POSTGRES_USER: ${ADMIN_DBUSER}
       POSTGRES_PASSWORD: ${ADMIN_DBPASS}
-
-      DJAPP_DBNAME: ${DJAPP_DBNAME}
-      DJAPP_DBUSER: ${DJAPP_DBUSER}
-      DJAPP_DBPASS: ${DJAPP_DBPASS}
     volumes:
       - ./scripts/postgres/create_db.sh:/docker-entrypoint-initdb.d/pg_create_db.sh
       - database_data:/var/lib/postgresql/data
@@ -37,3 +33,19 @@ services:
       - internal
     ports:
       - 9876:5432
+
+  #-----------------------------------#
+  #             Database              #
+  #-----------------------------------#
+  web:
+    build: .
+    image: djpgp-webapp
+    volumes:
+      - ./webapp:/app/webapp
+    env_file: .env
+    depends_on:
+      - database
+    ports:
+      - 8888:8000
+    networks:
+      - internal
