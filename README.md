@@ -1,4 +1,4 @@
-# Django PGPostGIS Scaffold
+# Django App Scaffold
 
 This repository contains a scaffold for settuing up Django with a PostgreSQL + PostGIS database
 for data storage.
@@ -60,3 +60,11 @@ This will:
   > **NOTE**: these settings only take effect when the container has no associated volume or when the
   > volume doesn't already have database data files. If a volume with database data files already exist,
   > these are used on all subsequent starting of the database container unless the volume is deleted.
+  > See the [docker notes for postgres](https://hub.docker.com/_/postgres), under the Initialization
+  > scripts section of the for more details about this.
+
+## How-To
+
+How-to instructions can be found within the `docs/how-to` folder.
+
+- [Working with docker](docs/how-to/docker.md)
