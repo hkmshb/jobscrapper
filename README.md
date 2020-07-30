@@ -23,7 +23,7 @@ cd django-pgpostgis
 
 ### Environment Variables
 
-The `.env.template` files lists all variables required for a proper setup. These settings are used
+The `.env.template` file lists all variables required for a proper setup. These settings are used
 to automatically set up a new database when starting up the database docker container.
 
 Most of the variables are set with sample values within angle brackets. Create a copy of the template
@@ -32,14 +32,14 @@ have the angle brackets**.
 
 ```bash
 # create copy of .env.template named .env
-# NOTE: .env files should never be commit to a repo.
+# NOTE: .env files should never be committed to a repo
 cp .env.template .env
 ```
 
 Configure the PostgreSQL superuser login credentials under the **PG SUPERUSER** section, and the name
-of the new application database and an associated user under the **APP DATABASE** section within the
-`.env` file. It is considered best practice to have a separate database user with non-admin privileges
-for interacting with the application database.
+of the new application database and an associated user login credentials under the **APP DATABASE**
+section within the `.env` file. It is considered best practice to have a separate database user with
+non-admin privileges for interacting with the application database.
 
 ## Usage
 
@@ -61,7 +61,7 @@ This will:
   > volume doesn't already have database data files. If a volume with database data files already exist,
   > these are used on all subsequent starting of the database container unless the volume is deleted.
   > See the [docker notes for postgres](https://hub.docker.com/_/postgres), under the Initialization
-  > scripts section of the for more details about this.
+  > scripts section for more details about this.
 
 ## How-To
 

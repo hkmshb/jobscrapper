@@ -1,9 +1,9 @@
 # How-To
 
-All `docker-compose` commands illustrated within this document are expected to be executed
-from within the project root directory on the command line interface (aka cli, shell). This
-is the folder directly containing the `README.md`, `docker-compose.yml` (aka compose file)
-files together with other files.
+All `docker-compose` commands illustrated in this document are expected to be executed from
+within the project root directory on the command line interface (aka cli, shell). This is the
+folder directly containing the `README.md`, `docker-compose.yml` (aka compose file) files
+together with other files.
 
 ---
 
@@ -44,8 +44,8 @@ docker-compose up
 docker-compose up <service-name>    # e.g: docker-compose up database
 ```
 
-As there is just the `database` service at the moment just that will startup and logs will
-on the cli.
+As there is just the `database` service at the moment just that will start up and logs will
+be shown on the cli.
 
 ## Stop running containers
 
@@ -84,9 +84,9 @@ tab/page. Identify the tag for the target image and update compose file:
       ...
 ```
 
-What does `postgis/postgis` mean within `postgis/postgis:<tag>`? The first `postgis` is the
-account name on [Docker Hub](https://hub.docker.com), the next `postgis` is the image name
-and `<tag>` the image tag which usually carries the version and sometimes platform/distro name.
+What does `postgis/postgis` mean in `postgis/postgis:<tag>`? The first `postgis` is the account
+name on [Docker Hub](https://hub.docker.com), the next `postgis` is the image name and `<tag>`
+the image tag which usually carries the version and sometimes platform/distro name.
 
 To target just PostgreSQL without PostGIS, check this official account for postgres on Docker
 Hub [here](https://hub.docker.com/_/postgres).
@@ -100,10 +100,10 @@ In the event that an existing docker volume is to be deleted, stop all container
 # syntax
 docker volume rm <volume-name>
 
-# to delete the docker volume associated with database service for this setup
+# to delete the docker volume associated with the database service for this setup
 docker volume rm djpgp-database_data
 ```
 
 Line `9` in the compose file names the volume associated with the `database` service on line
 `28`. Lines `8 to 7` defines the volume to be created by `docker-compose`. For more details
-on working with docker volumes [see](https://docs.docker.com/storage/volumes/).
+on working with docker volumes [see this page](https://docs.docker.com/storage/volumes/).
