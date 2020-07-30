@@ -1,9 +1,9 @@
-# Hot-To
+# How-To :: Django
 
 All commands illustrated in this document are expected to be executed from within the project
 root directory on the command line interface (aka cli, shell). This is the folder directly
-containing the `README.md`, `docker-compose.yml` (aka compose file) files together with other
-files.
+containing the `README.md` and `docker-compose.yml` (aka compose file) files together with
+other files.
 
 ---
 
@@ -38,9 +38,11 @@ docker-compose up
 
 The Django application provided in the `webapp` folder can be run directly on the host system
 outside Docker if you so choose. Possible options are listed below and in all cases database
-related environment variables need to be updated in the `.env` as show under each section:
+related environment variables need to be updated in the `.env` file as show under each section
+for different options below.
 
-Rename the `.env` file to `.env.sh` and `export ` command before every defined variable, eg:
+To begin, rename the `.env` file to `.env.sh` and add the `export ` command before every defined
+variable in the file, eg:
 
 ```ini
   # previos content
@@ -52,7 +54,8 @@ Rename the `.env` file to `.env.sh` and `export ` command before every defined v
   ...
 ```
 
-**Using PostgreSQL (with PostGIS extension) database on the host**
+#### Using PostgreSQL (with PostGIS extension) database on the host
+
 The PostgreSQL (with PostGIS extension enabled) needs to have been installed on the host system.
 The target application database can be created using `psql` or [pgAdmin](https://www.pgadmin.org)
 all running locally on the host system. No need to run the `scripts/postgres/create_db.sh` bash
@@ -69,11 +72,13 @@ export DEBUG=True
 export SECRET_KEY=<secret>
 ```
 
-**Using SQLite database**
+#### Using SQLite database
+
 An SQLite database would have been a viable alternative if the project does not aim to store and
 manage spatial data. For this project this is not an option.
 
-**Using Docker database**
+#### Using Docker database
+
 The PostgreSQL + PostGIS databse configure with the compose file can be started and connected to
 from the Django application running from the host system.
 

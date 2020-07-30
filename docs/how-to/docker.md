@@ -1,4 +1,4 @@
-# How-To
+# How-To :: Docker
 
 All `docker-compose` commands illustrated in this document are expected to be executed from
 within the project root directory on the command line interface (aka cli, shell). This is the
