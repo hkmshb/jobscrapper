@@ -6,7 +6,7 @@ if [ -z ${DJAPP_DBUSER} ] || [ -z ${DJAPP_DBNAME} ] || [ -z ${DJAPP_DBPASS} ]; t
            DJAPP_DBNAME, DJAPP_DBUSER, DJAPP_DBPASS
 
     Be sure to delete the current database volume after setting these required
-    environment variables, otherwise this database configuration scrtipt will
+    environment variables, otherwise this database configuration script will
     not be run again. For more details see the Initialization scripts section
     of: https://hub.docker.com/_/postgres
 EOF

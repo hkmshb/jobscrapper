@@ -37,7 +37,7 @@ services:
   #-----------------------------------#
   #             Database              #
   #-----------------------------------#
-  web:
+  webapp:
     build: .
     image: djpgp-webapp
     volumes:
