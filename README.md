@@ -15,6 +15,8 @@ for data storage.
     - [Django App Settings](#django-app-settings)
 - [Usage](#usage)
 - [How-To](#how-to)
+- [Setup Brief Overview](#setup-brief-overview)
+  - [Directory Contents](#directory-contents)
 
 ---
 
@@ -125,3 +127,27 @@ How-to instructions can be found within the `docs/how-to` folder.
 
 - [Docker related instructions](docs/how-to/docker.md)
 - [Django related instructions](docs/how-to/django.md)
+
+## Setup Brief Overview
+
+### Directory Contents
+
+```text
+django-pgpostgis/                 : project root directory
+├── docs/                         : contains .md files with how-to instructions
+├── scripts/                      : contains bash scripts
+|   ├── postgres/
+|   |   └── create_db.sh          : bash script mounted to database service image and run during container startup
+|   └── start.sh                  : bash script added to webapp service iamge and run during container startup
+├── webapp/                       : django application created via `django-admin startproject webapp`
+|   ├── polls/                    : django app added via `django-admin startapp poll`
+|   ├── webapp/                   : contains python modules for django core settings and others for url, wsgi etc
+|   └── manage.py                 : django management script
+├── .editorconfig                 : contains coding style settings that can be shared across Editors and IDEs
+├── .env.template                 : template file for .env file defining all env vars to run setup successfully
+├── .gitignore
+├── docker-compose.yml
+├── Dockerfile
+├── README.md
+└── requirements.txt              : list of python dependencies for the django application
+```
