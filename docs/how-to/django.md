@@ -9,17 +9,17 @@ files.
 
 ## Table of contents
 
-- [Set up development environment](#set-up-development-environment)
+- [Run Application](#run-application)
   - [Using Docker](#using-docker)
   - [Without using Docker](#without-using-docker)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
-  - [Add more Django apps](#add-more-django-apps)
-  - [Install more Python third-party libraries](#install-more-python-third-party-libraries)
+- [Add more Django apps](#add-more-django-apps)
+- [Install more Python third-party libraries](#install-more-python-third-party-libraries)
 
 ---
 
-## Set up development environment
+## Run Application
 
 ### Using Docker
 
