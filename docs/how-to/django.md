@@ -118,7 +118,7 @@ python3 -m venv .venv
 (.venv) python webapp/manage.py runserver 8080
 ```
 
-Access the running Django application at http://localhost:8888/ on your browser.
+Access the running Django application at http://localhost:8080/ on your browser.
 
 ## Add more Django apps
 
