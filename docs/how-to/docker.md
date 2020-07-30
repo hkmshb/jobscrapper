@@ -29,8 +29,25 @@ docker-compose build
 docker-compose build <service-name>
 ```
 
-The `database` service uses the `postgis/postgis:12-3.0-alpine` docker image, so there is
-nothing to build.
+The **database** service uses the `postgis/postgis:12-3.0-alpine` docker image and does not specify
+any `Dockerfile` to drive a build, so nothing is built instead the aforementioned image is pulled
+(downloaded) from [Docker Hub](https://hub.docker.com) if it doesn't already exist on the host system.
+
+On the other hand, the **webapp** service specifies the `image` and `build` configuration options. With
+the `build` option provided, `image` is interpreted as the name of the image to build, and the `build`
+option (as used in the compose file) indicates the location of the `Dockerfile` containing commands
+to drive the build. The `.` in `build: .` indicates the location of the `Dockerfile` for the build as
+being the same as the location of the compose file, which in this case is the project root directory.
+
+The relevant entries within the compose file that specify the the image name and target `Dockerfile`
+for the **webapp** service are shown below:
+
+```yaml
+webapp:
+  build: .
+  image: djpgp-webapp
+  ...
+```
 
 ## Run images as containers
 
@@ -41,11 +58,17 @@ To run images for services listed in the compose file run:
 docker-compose up
 
 # run a specific service
-docker-compose up <service-name>    # e.g: docker-compose up database
+docker-compose up <service-name>                    # e.g: docker-compose up database
+
+# or multiple services
+docker-compose up <service-name>, <service-name>    # e.g: docker-compose up database, webapp
 ```
 
-As there is just the `database` service at the moment just that will start up and logs will
-be shown on the cli.
+Run `docker-compose up` on the cli to start both the **database** and **webapp** services defined
+in the the compose file. Logs for each of these service will be written to the cli as they startup
+and afterwards while they are running. If a container cannot be created or started for any of the
+services or an error occurs while already running, logs describing the error will be written on
+the cli.
 
 ## Stop running containers
 

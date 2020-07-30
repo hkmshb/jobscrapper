@@ -3,6 +3,21 @@
 This repository contains a scaffold for settuing up Django with a PostgreSQL + PostGIS database
 for data storage.
 
+---
+
+## Table of contents
+
+- [Setup](#setup)
+  - [Dependencies](#dependencies)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+    - [Database Settings](#database-settings)
+    - [Django App Settings](#django-app-settings)
+- [Usage](#usage)
+- [How-To](#how-to)
+
+---
+
 ## Setup
 
 ### Dependencies
@@ -36,10 +51,37 @@ have the angle brackets**.
 cp .env.template .env
 ```
 
+#### Database Settings
+
 Configure the PostgreSQL superuser login credentials under the **PG SUPERUSER** section, and the name
 of the new application database and an associated user login credentials under the **APP DATABASE**
 section within the `.env` file. It is considered best practice to have a separate database user with
 non-admin privileges for interacting with the application database.
+
+More variables have been added to the **APP DATABASE** section, these variables are used by the Django
+application to build a connection string used to connect to the application database.
+
+#### Django App Settings
+
+Configure Django specific settings that control aspects of the application as explained in the official
+Django documentation found [here](https://docs.djangoproject.com/en/3.0/ref/settings/). Provided below
+is a brief description of core settings configurable using the `.env` file:
+
+```text
+ALLOWED_HOSTS
+    List of host/domain names (or IP addresses) that the application should handle HTTP requests for.
+    When DEBUG is set to True its effective value is ['localhost', '127.0.0.1'], meaning only requests
+    from the host system will be processed. Ideal for local development.
+
+DEBUG
+    Turns on/off debug mode. When set to True detailed error traceback is displayed when an exception
+    occurs. This is ideal for local development. THIS SHOULD BE TURNED OFF WHEN RUN IN PRODUCTION.
+
+SECRET_KEY
+    A key used for cryptograhic signing of cookies and other Django resources. This should be set to
+    a unique, unpredictable valule. DJANGO WILL REFUSE TO START IF NOT SET.
+
+```
 
 ## Usage
 
@@ -49,9 +91,13 @@ docker-compose up
 
 This will:
 
-- start a docker container for the **database** docker service
+- build an image for the **webapp** docker service named `djpgp-webapp` based on the configurations and
+  commands and provided in the `Dockerfile` found in the project root directory.
+- start a docker container for the **database** and **webapp** docker services
 - bind the host port `9876` to the postgres port `5432` so that an application like [pgAdmin](https://www.pgadmin.org)
   installed on the host can be used to view and interact with the database inside the docker container.
+- bind the host port `8888` to the Django development server port `8000` so that the running Django
+  application can be accessed from outside the webapp docker container.
 - create and associate a [volume](https://docs.docker.com/storage/volumes/) named `djpgp-database_data`
   with the container if one doesn't already exist for the storage of database data files.
 - create default postgres databases, configure the superuser, and create the application database and
@@ -63,8 +109,19 @@ This will:
   > See the [docker notes for postgres](https://hub.docker.com/_/postgres), under the Initialization
   > scripts section for more details about this.
 
+- creates a mapped volume or the **webapp** container; the `webapp` folder on the host system within
+  the project root directory is mapped (linked) to `/app/webapp` folder within the container. This
+  allows local changes made to files within the `webapp` folder on the host to reflect automatically
+  inside the container. This is ideal for local development and eliminates the need to constantly
+  rebuild the **webapp** image in order for changed files to be bundled into the image and available
+  within containers created from the image on subsequent runs of `docker-compose up`.
+
+Access the Django application running within `webapp` container at http://localhost:8888/ from your
+browser.
+
 ## How-To
 
 How-to instructions can be found within the `docs/how-to` folder.
 
-- [Working with docker](docs/how-to/docker.md)
+- [Docker related instructions](docs/how-to/docker.md)
+- [Django related instructions](docs/how-to/django.md)
