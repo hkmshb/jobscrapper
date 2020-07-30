@@ -57,9 +57,9 @@ variable in the file, eg:
 #### Using PostgreSQL (with PostGIS extension) database on the host
 
 The PostgreSQL (with PostGIS extension enabled) needs to have been installed on the host system.
-The target application database can be created using `psql` or [pgAdmin](https://www.pgadmin.org)
-all running locally on the host system. No need to run the `scripts/postgres/create_db.sh` bash
-script.
+The target application database can be created using [psql](https://www.postgresql.org/docs/12/app-psql.html)
+or [pgAdmin](https://www.pgadmin.org) all running locally on the host system. No need to run the
+`create_db.sh` bash script.
 
 ```ini
 # .env.sh updates
