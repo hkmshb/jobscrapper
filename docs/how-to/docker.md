@@ -40,6 +40,7 @@ docker-compose build --no-cache webapp
 - [Stop running containers](#stop-running-containers)
 - [Target a different version of PostgreSQL and PostGIS](#target-a-different-version-of-postgresql-and-postgis)
 - [Delete a docker volume](#delete-a-docker-volume)
+- [Customize database initialization](#customize-database-initialization)
 
 ---
 
@@ -154,5 +155,37 @@ docker volume rm djpgp-database_data
 ```
 
 Line `9` in the compose file names the volume associated with the `database` service on line
-`28`. Lines `8 to 7` defines the volume to be created by `docker-compose`. For more details
+`24`. Lines `8 to 7` defines the volume to be created by `docker-compose`. For more details
 on working with docker volumes [see this page](https://docs.docker.com/storage/volumes/).
+
+## Customize database initialization
+
+The `postgis/postgis:x` images are build from `postgres/postgres:x` images. The PostgreSQL images,
+as documented on their Docker Hub page, have an in-built mechanism for running initialization
+scripts on startup when the database data files are (yet to be created) just being created. These
+scripts are `.sh` and `.sql` files found within the `/docker-entrypoint-initdb.d/` folder inside
+the docker container created from the `postgres:postgres:x` based images.
+
+This setup employs this in-built mechanism in setting up the application database and user for the
+Django application. The compose file, under the `volume` configuration for the `database` service
+mounts the `create_db.sh` script found inside `./scripts/postgres` into the container initialization
+scripts folder `/docker-entrypoint-initdb.d/`. The portions of the definition too achieve this is
+shown below:
+
+```yaml
+  database:
+    image: postgis/postgis:12-3.0-alpine
+    environment:
+      PGUSER: ${ADMIN_DBUSER}
+      POSTGRES_USER: ${ADMIN_DBUSER}
+      POSTGRES_PASSWORD: ${ADMIN_DBPASS}
+    volumes:
+      - ./scripts/postgres/create_db.sh:/docker-entrypoint-initdb.d/pg_create_db.sh
+  ...
+```
+
+Thus whenever the `database` service is being started and new database data files are being created, the
+`create_db.sh` script (on host system) mounted into the container with the new name `pg_create_db.sh` is
+executed. Note that multiple files can be mounted into this location, and only files having the `.sh`
+and `.sql` file extensions will be executed when the necessary conditions are meet. The files will be
+executed by the alphabetic order of thier names.
