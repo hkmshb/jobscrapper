@@ -5,6 +5,32 @@ within the project root directory on the command line interface (aka cli, shell)
 folder directly containing the `README.md`, `docker-compose.yml` (aka compose file) files
 together with other files.
 
+The compose file has been updated to ease targeting different docker files for building the
+**webapp** image. The original `Dockerfile` or the newer `Dockerfile.pipenv` can be use; where
+the former relies on pip for setting up the python (dependencies) environment, the later uses
+pipenv. The updated compose file now uses `Dockerfile.pipenv` as shown below.
+
+```yaml
+webapp:
+  build:
+    context: .
+    dockerfile: Dockerfile.pipenv
+    ...
+```
+
+To use the original `Dockerfile` update the dockerfile entry to `dockerile: Dockerfile`.
+Whenever such changes occur, the **webapp** must be rebuilt as docker files may differ in the
+base images used or some other ways. No matter how trivial the difference though, a rebuild
+is necessary.
+
+```bash
+# rebuild by using the build with the --no-cache flag. this is important and indicates that
+# a clean, fresh build should be conducted without any parts/portions of previous buils being
+# reused. The --no-cache flag is necessary as Docker caches step in its build process for
+# reuse in subsequent builds.
+docker-compose build --no-cache webapp
+```
+
 ---
 
 ## Table of contents

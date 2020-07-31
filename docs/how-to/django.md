@@ -160,8 +160,48 @@ Access the running Django application at <http://localhost:8081/> on your browse
 
 ## Add more Django apps
 
-TODO
+Issue the command below to add a new Django app.
+
+```bash
+# it is assumed that the current directory is the project root directory
+# so change into the `webapp` folder to create new app therein
+cd webapp
+
+# use manage.py
+python manage.py startapp <name>
+
+# or django-admin
+django-admin startapp <name>
+
+# return to the project root directory afterwards as most commands are expected
+# to be issued from that location
+cd ..
+```
+
+A Django app by the specified name is created at the current directory. Don't forget
+to register the url routes for this app within the `webapps/urls.py` module.
 
 ## Install more Python third-party libraries
 
-TODO
+Add a third-party library using `pip` as follows:
+
+```bash
+# install library
+pip install <library-name>
+
+# update requirements.txt file
+pip freeze > requirements.txt
+```
+
+Using `pipevn`:
+
+```bash
+# install library
+pipenv install <library-name>
+```
+
+The library is automatically recorded within the `Pipfile` as a dependency for this project and
+the dependencies for the installed library are captured within `Pipfile.lock`.
+
+Rebuild the **webapp** image using `docker-compose build --no-cache webapp`. Remember to update
+the `dockerfile:` entry as necessary in the compose file to reflect the target Docker file to use.
