@@ -38,7 +38,9 @@ services:
   #             Database              #
   #-----------------------------------#
   webapp:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.pipenv
     image: djpgp-webapp
     volumes:
       - ./webapp:/app/webapp
