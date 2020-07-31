@@ -13,7 +13,8 @@ other files.
   - [Using Docker](#using-docker)
   - [Without using Docker](#without-using-docker)
     - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
+    - [Installation using pip + virtualenv](#installation-using-pip-virtualenv)
+    - [Installation using Pipenv](#installation-using-pipenv)
 - [Add more Django apps](#add-more-django-apps)
 - [Install more Python third-party libraries](#install-more-python-third-party-libraries)
 
@@ -41,7 +42,7 @@ outside Docker if you so choose. Possible options are listed below and in all ca
 related environment variables need to be updated in the `.env` file as show under each section
 for different options below.
 
-To begin, rename the `.env` file to `.env.sh` and add the `export ` command before every defined
+To begin, rename the `.env` file to `.env.sh` and add the `export` command before every defined
 variable in the file, eg:
 
 ```ini
@@ -97,9 +98,9 @@ export SECRET_KEY=<secret>
 
 - Python 3.6+
 
-#### Installation
+#### Installation using pip + virtualenv
 
-Proceed as follows (remember to run commands from the project run directory):
+Proceed as follows (remember to run commands from the project root directory):
 
 ```bash
 # create a virtualenv name `.venv` using Python venv module available in Python 3.6+
@@ -118,7 +119,44 @@ python3 -m venv .venv
 (.venv) python webapp/manage.py runserver 8080
 ```
 
-Access the running Django application at http://localhost:8080/ on your browser.
+Access the running Django application at <http://localhost:8080/> on your browser.
+
+#### Installation using Pipenv
+
+Unlike `pip` which comes with Python, [Pipenv](https://pipenv-fork.readthedocs.io/en/latest/)
+needs to be installed. With `Pipenv` you no longer need to use `pip` and `virtualenv` separately.
+They work together. On MacOS and Linux (using Linuxbrew), use the command below to install `Pipenv`
+as a command-line tool available system wide.
+
+```bash
+brew install pipenv
+```
+
+Alternatively, pipenv can be installed using `pip`. See `Pipenv` [installation guide](
+https://pipenv-fork.readthedocs.io/en/latest/install.html#installing-pipenv) for more details.
+
+```bash
+pip install pipenv
+```
+
+Proceed as follows (remember to run commands from the project root directory):
+
+```bash
+# install all python dependencies for the project from the Pipfile (and Pipfile.lock)
+# A virtualenv is created (and used) automatically
+pipenv install
+
+# verify location of created virtualenv (optional)
+pipenv --venv
+
+# run the application
+# NOTE: there is no need to create a separate `.env.sh` file with `export` command
+# added before each variable. Pipenv has in-built support for automatically loading
+# and working with `.env` files if any exists.
+pipenv run webapp/manage.py runserver 8081
+```
+
+Access the running Django application at <http://localhost:8081/> on your browser.
 
 ## Add more Django apps
 

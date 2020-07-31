@@ -1,6 +1,6 @@
 # Django App Scaffold
 
-This repository contains a scaffold for settuing up Django with a PostgreSQL + PostGIS database
+This repository contains a scaffold for setting up Django with a PostgreSQL + PostGIS database
 for data storage.
 
 ---
@@ -14,8 +14,8 @@ for data storage.
     - [Database Settings](#database-settings)
     - [Django App Settings](#django-app-settings)
 - [Usage](#usage)
-- [How-To](#how-to)
-- [Setup Brief Overview](#setup-brief-overview)
+- [How-To Guides](#how-to-guides)
+- [Setup Overview](#setup-overview)
   - [Directory Contents](#directory-contents)
 
 ---
@@ -94,16 +94,16 @@ docker-compose up
 This will:
 
 - build an image for the **webapp** docker service named `djpgp-webapp` based on the configurations and
-  commands and provided in the `Dockerfile` found in the project root directory.
+  commands provided in the `Dockerfile` found in the project root directory.
 - start a docker container for the **database** and **webapp** docker services
 - bind the host port `9876` to the postgres port `5432` so that an application like [pgAdmin](https://www.pgadmin.org)
   installed on the host can be used to view and interact with the database inside the docker container.
 - bind the host port `8888` to the Django development server port `8000` so that the running Django
   application can be accessed from outside the webapp docker container.
 - create and associate a [volume](https://docs.docker.com/storage/volumes/) named `djpgp-database_data`
-  with the container if one doesn't already exist for the storage of database data files.
+  with the database container if one doesn't already exist for the storage of database data files.
 - create default postgres databases, configure the superuser, and create the application database and
-  user using configured settings in the `.env` file.
+  application user using configured settings in the `.env` file inside the database docker container.
 
   > **NOTE**: these settings only take effect when the container has no associated volume or when the
   > volume doesn't already have database data files. If a volume with database data files already exist,
@@ -111,24 +111,24 @@ This will:
   > See the [docker notes for postgres](https://hub.docker.com/_/postgres), under the Initialization
   > scripts section for more details about this.
 
-- creates a mapped volume or the **webapp** container; the `webapp` folder on the host system within
+- creates a mapped volume for the **webapp** container; the `webapp` folder on the host system within
   the project root directory is mapped (linked) to `/app/webapp` folder within the container. This
   allows local changes made to files within the `webapp` folder on the host to reflect automatically
   inside the container. This is ideal for local development and eliminates the need to constantly
-  rebuild the **webapp** image in order for changed files to be bundled into the image and available
+  rebuild the **webapp** image in order for changed files to be included in the image and available
   within containers created from the image on subsequent runs of `docker-compose up`.
 
-Access the Django application running within `webapp` container at http://localhost:8888/ from your
-browser.
+Access the Django application running within the `webapp` container at <http://localhost:8888/> from
+your browser.
 
-## How-To
+## How-To Guides
 
 How-to instructions can be found within the `docs/how-to` folder.
 
 - [Docker related instructions](docs/how-to/docker.md)
 - [Django related instructions](docs/how-to/django.md)
 
-## Setup Brief Overview
+## Setup Overview
 
 ### Directory Contents
 
