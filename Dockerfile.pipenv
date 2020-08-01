@@ -56,8 +56,12 @@ RUN pip install --upgrade pip &&\
 ## `/app` folder inside the image.
 COPY ./scripts/start.sh /app/start.sh
 
-## Change the mode of the copied start.sh script to set the file as executable
-RUN chmod +x /app/start.sh
+## Download bash script to test and wait on the availability of a TCP host and port
+ADD https://github.com/eficode/wait-for/raw/master/wait-for /app/wait-for.sh
+
+## Change the mode of the script inside `/app/` to set the files as executable
+RUN chmod +x /app/*.sh &&\
+    chown ${APP_USER}:${APP_USER} /app/wait-for.sh
 
 ## Set the container user as the user configured with an environment variable
 ## and created above. The docker instructions that follow are executed as the
