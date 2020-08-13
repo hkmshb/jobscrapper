@@ -1,6 +1,6 @@
-## The base image to build the new image from. This is an Alpine linux image
-## WITH Python version 3.8 already installed.
-FROM python:3.8
+## The base image to build the new image from. This is an Debian linux image
+## with Python version 3.8 already installed.
+FROM python:3.8-slim
 
 LABEL maintainer="Abdul-Hakeem <hkmshb@gmail.com>"
 

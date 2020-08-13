@@ -1,6 +1,6 @@
-# Django App Scaffold
+# Django App
 
-This repository contains a scaffold for setting up Django with a PostgreSQL + PostGIS database
+This repository contains a setup for Django with a PostgreSQL + PostGIS database
 for data storage.
 
 ---
@@ -17,6 +17,7 @@ for data storage.
 - [How-To Guides](#how-to-guides)
 - [Setup Overview](#setup-overview)
   - [Directory Contents](#directory-contents)
+- [Fetch and Run Updates](#fetch-and-run-updates)
 
 ---
 
@@ -154,3 +155,31 @@ django-pgpostgis/                 : project root directory
 ├── README.md
 └── requirements.txt              : list of python dependencies for the django application
 ```
+
+## Fetch and Run Updates
+
+From within the project root directory execute the set of commands provided below to fetch, build and run the
+application setup using the latest changes with the code repository within GitHub.
+
+Remember to update the `.env` file with any newly added environment variables. Kindly refer to the latest section
+within the [Changelog](./CHANGELOG.md) file to determine what the new variables are. Add the new variables and set
+desired values.
+
+```bash
+# pull latest changes
+git pull
+
+# stop running containers
+docker-compose down
+
+# build new image with latest changes
+docker-compose build --no-cache
+
+# run application
+docker-compose up
+```
+
+With the application running visit:
+
+- The home page at: <http://localhost:8888/>
+- The admin section at <http://localhost:8888/admin>
