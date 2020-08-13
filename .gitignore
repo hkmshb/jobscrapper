@@ -139,5 +139,7 @@ cython_debug/
 
 # misc
 [_.]tmp/
+.vscode/
+
 *.bak
 .env.sh

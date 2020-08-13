@@ -48,12 +48,14 @@ ALLOWED_HOSTS = [ *get_env_value('ALLOWED_HOSTS', '').split(',') ]
 # Application definition
 
 INSTALLED_APPS = [
+    'jobs.apps.JobsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 ]
 
 MIDDLEWARE = [
@@ -92,7 +94,7 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': get_env_value('DJAPP_DBNAME'),
         'USER': get_env_value('DJAPP_DBUSER'),
         'PASSWORD': get_env_value('DJAPP_DBPASS'),
