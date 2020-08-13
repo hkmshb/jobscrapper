@@ -35,12 +35,10 @@ services:
       - 9876:5432
 
   #-----------------------------------#
-  #             Database              #
+  #          Web Application          #
   #-----------------------------------#
   webapp:
-    build:
-      context: .
-      dockerfile: Dockerfile.pipenv
+    build: .
     image: djpgp-webapp
     volumes:
       - ./webapp:/app/webapp

@@ -1,6 +1,6 @@
 ## The base image to build the new image from. This is an Alpine linux image
 ## WITH Python version 3.8 already installed.
-FROM python:3.8-alpine
+FROM python:3.8
 
 LABEL maintainer="Abdul-Hakeem <hkmshb@gmail.com>"
 
@@ -19,28 +19,46 @@ WORKDIR /app
 ## binary version for Alpine Linux on Pypi, hence it will be build from plain
 ## source code files. The dependencies to aid this build are what are installed
 ## below. `apk` for Alpine is similar to `apt` for Ubuntu and `brew` for MacOs.
-RUN apk add --no-cache \
-        gcc \
-        musl-dev \
-        postgresql-dev
+RUN apt-get -q -y update \
+    && DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade \
+    && apt-get -q -y install \
+        build-essential \
+        python3-dev \
+        libpq-dev \
+        gdal-bin \
+    && apt-get -q clean \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Create a local user and group to run the application under. It is not ideal
 ## to use the root user with root privileges to run an application. It is best
 ## practice to use a User with the least amount of privileges necessary to run
 ## an application successfully. `addgroup` and `adduser` commands use the value
 ## from environment variables set above.
-RUN addgroup -g 92 -S ${APP_USER} && \
-    adduser -u 92 -h /app -H -D -S -G ${APP_USER} ${APP_USER}
+RUN groupadd --gid 92 --system ${APP_USER} && \
+    useradd --uid 92 --home-dir /app --gid ${APP_USER} ${APP_USER}
 
-## Copy and embed the requirements.txt file and the webapp folder into the
-## image all within the `/app` folder of the image.
-COPY ./requirements.txt /app/
+## Copy and embed Pipenv generated Pipfile and Pipfile.lock which contain list of
+## dependencies for the project and the webapp folder into the image all inside
+## the `/app` folder of the image.
+COPY Pipfile Pipfile.lock /app/
 COPY ./webapp /app/webapp
+
+## create a blank .env file inside /app as this is required by django-dotenv
+RUN echo "# blank .env file" > /app/.env
+
+## Assign ownership of all contents of the `/app` folder to the application user
+## without this, `pipenv install` will fail as it won't have the necessary permissions
+## to create required artifacts within the `/app` folder
+RUN chown -R ${APP_USER}:${APP_USER} /app
 
 ## Update pip, then install all Python dependencies for the application into
 ## the image using the requirements.txt file within the image.
 RUN pip install --upgrade pip &&\
-    pip install --no-cache -r /app/requirements.txt
+    pip install pipenv &&\
+    # --system --deploy tells pipenv to install packages directly in the container's
+    # system python rather than creating a virtualenv and installing packages into
+    # the virtualenv
+    pipenv install --system --deploy
 
 ## Copy the bash script named start.sh to run the Django application to the
 ## `/app` folder inside the image.
@@ -51,7 +69,7 @@ ADD https://github.com/eficode/wait-for/raw/master/wait-for /app/wait-for.sh
 
 ## Change the mode of the script inside `/app/` to set the files as executable
 RUN chmod +x /app/*.sh &&\
-    chown -R ${APP_USER}:${APP_USER} /app/
+    chown ${APP_USER}:${APP_USER} /app/wait-for.sh
 
 ## Set the container user as the user configured with an environment variable
 ## and created above. The docker instructions that follow are executed as the
