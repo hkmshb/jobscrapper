@@ -2,9 +2,14 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import dotenv
+from pathlib import Path
 
 
 def main():
+    path = Path(__file__).absolute()
+    dotenv.read_dotenv(str(path.parent.parent))
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
     try:
         from django.core.management import execute_from_command_line
