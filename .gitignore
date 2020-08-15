@@ -144,3 +144,5 @@ cython_debug/
 *.bak
 *.todo
 .env.sh
+.env.test
+.python-version

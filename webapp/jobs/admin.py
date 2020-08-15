@@ -22,4 +22,4 @@ class LocationAdmin(GeoModelAdmin):
 
 @admin.register(Opening)
 class OpeningAdmin(admin.ModelAdmin):
-    list_display = ('company', 'role_title', 'url', 'is_remote', 'has_401k')
+    list_display = ('role_title', 'company', 'url', 'is_remote', 'has_401k')
