@@ -1,0 +1,21 @@
+[{
+  "model": "jobs.company",
+  "pk": 1,
+  "fields": {
+    "name": "World Bank Group",
+    "industry": "Health and Humanitarian Services",
+    "vacancies_url": "https://worldbankgroup.csod.com/ats/careersite/search.aspx",
+    "last_updated": "2020-08-15",
+    "update_freq": 1
+  }
+}, {
+  "model": "jobs.company",
+  "pk": 2,
+  "fields": {
+    "name": "SEQUOAI",
+    "industry": "Finance",
+    "vacancies_url": "https://www.sequoiacap.com/jobs",
+    "last_updated": "2020-08-15",
+    "update_freq": 2
+  }
+}]
