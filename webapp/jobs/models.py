@@ -36,17 +36,19 @@ class Opening(Entity):
     """Defines fields for recording job opening details.
     """
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    role_title = models.CharField('Role Title', max_length=50)
+    role_title = models.CharField('Role Title', max_length=100)
     description = models.TextField()
-    url = models.URLField('Job Url', max_length=200)
+    url = models.URLField('Job Url', max_length=200, unique=True)
     is_remote = models.NullBooleanField('Is Remote')
     part_time_permitted = models.NullBooleanField('Part-Time Permitted')
     has_401k = models.NullBooleanField('Has 401k')
     has_dentalins = models.NullBooleanField('Has Dental Insurance')
     has_healthins = models.NullBooleanField('Has Health Insurance')
-    salary_range = pgmodels.IntegerRangeField('Salary Range')
+    salary_range = pgmodels.IntegerRangeField('Salary Range', blank=True, null=True)
     date_active = models.DateField('Date Active', auto_now=False, auto_now_add=False)
-    date_inactive = models.DateField('Date Inactive', auto_now=False, auto_now_add=False)
+    date_inactive = models.DateField(
+        'Date Inactive', auto_now=False, auto_now_add=False, blank=True, null=True
+    )
 
     def __str__(self):
         """Returns string representation of the model.
