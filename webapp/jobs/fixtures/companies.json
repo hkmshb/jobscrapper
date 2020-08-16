@@ -3,6 +3,7 @@
   "pk": 1,
   "fields": {
     "name": "World Bank Group",
+    "name_slug": "world-bank-group",
     "industry": "Health and Humanitarian Services",
     "vacancies_url": "https://worldbankgroup.csod.com/ats/careersite/search.aspx",
     "last_updated": "2020-08-15",
@@ -13,6 +14,7 @@
   "pk": 2,
   "fields": {
     "name": "SEQUOAI",
+    "name_slug": "sequoai",
     "industry": "Finance",
     "vacancies_url": "https://www.sequoiacap.com/jobs",
     "last_updated": "2020-08-15",

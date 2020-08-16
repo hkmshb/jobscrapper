@@ -7,6 +7,7 @@ from .models import Company, Location, Opening
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_updated'
+    prepopulated_fields = {'name_slug': ('name',)}
     list_display = (
         'name', 'industry', 'vacancies_url', 'last_updated', 'update_freq'
     )

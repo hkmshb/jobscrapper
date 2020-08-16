@@ -13,7 +13,8 @@
     "has_healthins": null,
     "salary_range": null,
     "date_active": "2020-08-15",
-    "date_inactive": null
+    "date_inactive": null,
+    "date_created": "2020-08-15"
   }
 }, {
   "model": "jobs.opening",
@@ -30,7 +31,8 @@
     "has_healthins": null,
     "salary_range": null,
     "date_active": "2020-08-15",
-    "date_inactive": null
+    "date_inactive": null,
+    "date_created": "2020-08-15"
   }
 }, {
   "model": "jobs.opening",
@@ -47,6 +49,7 @@
     "has_healthins": null,
     "salary_range": null,
     "date_active": "2020-08-15",
-    "date_inactive": null
+    "date_inactive": null,
+    "date_created": "2020-08-15"
   }
 }]
