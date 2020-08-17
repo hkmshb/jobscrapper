@@ -1,8 +1,19 @@
 import re
+from enum import Enum
+
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.gis.db import models as gismodels
 from django.contrib.postgres import fields as pgmodels
+
+
+class DurationUnit(Enum):
+    DAYS = 'days'
+    HOURS = 'hours'
+
+    @classmethod
+    def values(cls):
+        return [e.value for e in list(cls)]
 
 
 class Entity(models.Model):
@@ -22,7 +33,7 @@ class Company(Entity):
     name_slug = models.SlugField('Name Slug', max_length=100, unique=True)
     industry = models.CharField(max_length=100)
     vacancies_url = models.URLField('Vacancies Url', max_length=200)
-    last_updated = models.DateField('Last Updated', auto_now=False, auto_now_add=False)
+    last_updated = models.DateTimeField('Last Updated', auto_now=False, auto_now_add=False)
     update_freq = models.IntegerField('Update Frequency', default=0)
 
     class Meta:
@@ -58,8 +69,8 @@ class Opening(Entity):
     date_inactive = models.DateField(
         'Date Inactive', auto_now=False, auto_now_add=False, blank=True, null=True
     )
-    date_created = models.DateField('Date Created', auto_now=False, auto_now_add=True)
-    last_processed = models.DateField(
+    date_created = models.DateTimeField('Date Created', auto_now=False, auto_now_add=True)
+    last_processed = models.DateTimeField(
         'Last Processed', auto_now=True, auto_now_add=False, blank=True, null=True
     )
 

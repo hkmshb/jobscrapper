@@ -11,6 +11,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='company',
+            name='last_updated',
+            field=models.DateTimeField(verbose_name='Last Updated'),
+        ),
         migrations.AddField(
             model_name='company',
             name='name_slug',
@@ -25,12 +30,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='opening',
             name='date_created',
-            field=models.DateField(auto_now_add=True, default=django.utils.timezone.now, verbose_name='Date Created'),
+            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now, verbose_name='Date Created'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='opening',
             name='last_processed',
-            field=models.DateField(auto_now=True, null=True, verbose_name='Last Processed'),
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Last Processed'),
         ),
     ]
