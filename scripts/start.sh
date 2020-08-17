@@ -1,5 +1,9 @@
 #!/bin/sh
 
+echo ">> starting cron"
+env >> /etc/environment
+service cron start
+
 echo ">> waiting on postgres"
 /app/wait-for.sh ${DJAPP_DBHOST}:${DJAPP_DBPORT} -- echo "postgres is up!"
 

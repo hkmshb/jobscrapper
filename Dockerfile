@@ -26,6 +26,8 @@ RUN apt-get -q -y update \
         python3-dev \
         libpq-dev \
         gdal-bin \
+        procps \
+        cron \
     && apt-get -q clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -63,6 +65,7 @@ RUN pip install --upgrade pip &&\
 ## Copy the bash script named start.sh to run the Django application to the
 ## `/app` folder inside the image.
 COPY ./scripts/start.sh /app/start.sh
+COPY ./scripts/cronjobs /app/cronjobs
 
 ## Download bash script to test and wait on the availability of a TCP host and port
 ADD https://github.com/eficode/wait-for/raw/master/wait-for /app/wait-for.sh
@@ -71,10 +74,18 @@ ADD https://github.com/eficode/wait-for/raw/master/wait-for /app/wait-for.sh
 RUN chmod +x /app/*.sh &&\
     chown ${APP_USER}:${APP_USER} /app/wait-for.sh
 
+## update crontab
+RUN mkdir -p /app/log &&\
+    cat /app/cronjobs >> /etc/crontab &&\
+    # redirect cron logs to docker output
+    ln -sf /proc/1/fd/1 /app/log/cron.log
+
 ## Set the container user as the user configured with an environment variable
 ## and created above. The docker instructions that follow are executed as the
 ## set user.
-USER ${APP_USER}
+
+# temporarily disabled to get cron to run as root
+# USER ${APP_USER}
 
 ## Expose the port the Django application is handling requests on so that it
 ## can be bounded to a host port so the application is accessible through the
