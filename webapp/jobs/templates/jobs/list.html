@@ -12,7 +12,13 @@
     <form>
       <div class="field is-grouped">
         <p class="control">
-          <input class="input" type="text" name="q" placeholder="Find an opening">
+          <input
+            class="input"
+            type="text"
+            name="q"
+            placeholder="Find an opening"
+            value={{ q | default_if_none:'' }}
+          >
         </p>
         <p class="control">
           <button class="button is-info"  type="submit">
@@ -37,7 +43,7 @@
           <tr>
             <td><a href="{% url 'show' opening.id %}">{{ opening.role_title }}</a></td>
             <td>{{ opening.company.name }}</td>
-            <td>{{ opening.url }}</td>
+            <td><a target="_blank" href="{{opening.url }}">{{ opening.url }}</a></td>
           </tr>
         {% empty %}
           <tr>
@@ -47,5 +53,31 @@
       </tbody>
     </table>
   </div>
+
+  {% if openings.has_other_pages %}
+  <nav class="pagination is-small mt-5" role="navigation" aria-label="pagination">
+    {% if openings.has_previous %}
+      <a class="pagination-previous" href="?page={{ openings.previous_page_number }}&{{ qs.urlencode }}">Previous</a>
+    {% endif %}
+
+    {% if openings.has_next %}
+      <a class="pagination-next" href="?page={{ openings.next_page_number }}&{{ qs.urlencode }}">Next page</a>
+    {% endif %}
+
+    <ul class="pagination-list">
+      {% for page in openings.paginator.page_range %}
+        <li>
+          <a
+            class="pagination-link {% ifequal page openings.number %} is-current {% endifequal %}"
+            aria-label="Goto page {{ page }}"
+            href="?page={{ page }}&{{ qs.urlencode }}"
+          >
+            {{ page }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
 
 {% endblock %}
