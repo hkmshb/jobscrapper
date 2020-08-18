@@ -18,6 +18,8 @@ for data storage.
 - [Setup Overview](#setup-overview)
   - [Directory Contents](#directory-contents)
 - [Fetch and Run Updates](#fetch-and-run-updates)
+  - [Loading Sample Data](#loading-sample-data)
+  - [Running Django Commands](#running-django-commands)
 
 ---
 
@@ -175,9 +177,37 @@ docker-compose build --no-cache
 
 # run application
 docker-compose up
+
+# if migration fails during container startup, drop the database volume with
+# then run the application again via `docker-compose up`
+docker volume rm djpgp-database_data
 ```
 
 With the application running visit:
 
 - The home page at: <http://localhost:8888/>
 - The admin section at <http://localhost:8888/admin>
+
+### Loading Sample Data
+
+Load sample companies (2) and openings (3) data into the database with:
+
+```bash
+docker-compose run --rm webapp loadsample
+```
+
+### Running Django Commands
+
+```bash
+# run all unit tests with (alias for `manage test --keepdb ./webapp/jobs/tests/`)
+docker-compose run --rm webapp manage tests
+
+# see available django management commands with
+docker-compose run --rm webapp manage help
+
+# run the scrapejobs command manually with
+docker-compose run --rm webapp manage scrapejobs
+
+# run other django management commands using
+docker-compose run --rm webapp manage [command]
+```

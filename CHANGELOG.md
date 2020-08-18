@@ -1,5 +1,17 @@
 # CHANGE LOG
 
+## 2020.08.17
+
+- Updated `Company` and `Opening` models
+  - `Company` updates: added `name_slug` field, changed `last_updated` to a datetime field
+  - `Opening` update: made `url` field unique, then `salary_range` and `date_inactive` to
+    be nullable; added `date_created` and `last_processed` datetime fields
+- Added fixtures and unit tests
+- Added logic for handling opening insertion and update
+- Added `scrapejobs` custom command
+- Added views for listing openings and showing details for a single opening
+- Added `entrypoint.sh` script to ease running custom commands within the webapp container
+
 ## 2020.08.13
 
 - Replaced the `polls` Django app with `jobs`
