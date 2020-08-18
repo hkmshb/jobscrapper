@@ -1,5 +1,17 @@
 #!/bin/bash
 
+
+function show_help {
+  echo """
+    Commands
+    ========
+    help            : show this help
+    loadsample      : load sample companies and openings data
+    manage ...      : django management script
+    manage tests    : run available unit tests for the setup
+  """
+}
+
 function run_manage {
   if [[ "$1" == "tests" ]]; then
     # install dev dependencies before running tests
@@ -11,6 +23,14 @@ function run_manage {
 }
 
 case "$1" in
+
+  help )
+    show_help
+  ;;
+
+  loadsample )
+    python webapp/manage.py loaddata companies.json openings.json
+  ;;
 
   manage )
     run_manage "${@:2}"
