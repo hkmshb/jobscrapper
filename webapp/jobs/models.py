@@ -53,10 +53,23 @@ class Company(Entity):
         return self.name
 
 
+class Location(Entity):
+    """Defineds fields for recording opening location details.
+    """
+    name = models.CharField(max_length=100, unique=True)
+    geom = gismodels.PointField('GPS Coord')
+
+    def __str__(self):
+        """Returns string representation of the model.
+        """
+        return f'{self.name}'
+
+
 class Opening(Entity):
     """Defines fields for recording job opening details.
     """
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    locations = models.ManyToManyField(Location, blank=True)
     role_title = models.CharField('Role Title', max_length=100)
     description = models.TextField()
     url = models.URLField('Job Url', max_length=200, unique=True)
@@ -104,16 +117,3 @@ class Opening(Entity):
         """Returns string representation of the model.
         """
         return f'{self.role_title} at {self.company.name}'
-
-
-class Location(Entity):
-    """Defineds fields for recording opening location details.
-    """
-    opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    geom = gismodels.PointField('GPS Coord')
-
-    def __str__(self):
-        """Returns string representation of the model.
-        """
-        return f'{self.opening}, ({self.name})'

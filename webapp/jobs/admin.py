@@ -15,9 +15,9 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(GeoModelAdmin):
-    list_display = ('opening', 'name', 'geom')
+    list_display = ('name', 'geom')
     default_lat = 37.0902
-    default_lon = 95.7129
+    default_lon = -95.7129
     default_zoom = 3
 
 

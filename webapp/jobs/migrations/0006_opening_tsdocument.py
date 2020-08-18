@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobs', '0004_auto_20200816_1354'),
+        ('jobs', '0005_auto_20200818_1751'),
     ]
 
     operations = [
@@ -25,18 +25,33 @@ class Migration(migrations.Migration):
             -- create function to automatically update/populate the tsdocument field
             CREATE OR REPLACE FUNCTION jobs_opening_tsvector_trigger() RETURNS trigger AS $$
             DECLARE
-                company_name    VARCHAR(100);
+                counter             INTEGER;
+                company_name        VARCHAR(100);
+                company_industry    VARCHAR(100);
+                location_names      VARCHAR(100) ARRAY[20];
             BEGIN
 
                 -- select company name from company id
-                SELECT name FROM jobs_company INTO company_name
+                SELECT name, industry INTO company_name, company_industry
+                FROM jobs_company
                 WHERE id = NEW.company_id;
+
+                -- select location names for opening
+                SELECT ARRAY(
+                    SELECT l.name
+                    FROM jobs_location l
+                    JOIN jobs_opening_locations ol
+                        ON (l.id = ol.location_id)
+                    WHERE ol.opening_id = NEW.id
+                ) INTO location_names;
 
                 -- prepare concatenated data to be stored in tsdocument
                 NEW.tsdocument :=
                     to_tsvector('english', COALESCE(NEW.role_title, '')) ||
                     to_tsvector('english', COALESCE(NEW.description,'')) ||
                     to_tsvector('english', COALESCE(company_name, '')) ||
+                    to_tsvector('english', COALESCE(company_industry, '')) ||
+                    to_tsvector('english', COALESCE(ARRAY_TO_STRING(location_names, '; '), '')) ||
                     to_tsvector('english', CASE NEW.is_remote WHEN 'true' THEN 'Remote' ELSE '' END) ||
                     to_tsvector('english', CASE NEW.part_time_permitted WHEN 'true' THEN 'Part-Time' ELSE '' END) ||
                     to_tsvector('english', CASE NEW.has_401k WHEN 'true' THEN '401K' ELSE '' END) ||
