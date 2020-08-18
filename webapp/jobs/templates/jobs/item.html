@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %} Job - Search {% endblock %}
+
+{% block content %}
+
+    <h1 class="title">
+      {{ opening.role_title }}
+    </h1>
+
+    <a class="button is-small is-link is-light" href="/">
+      Back
+    </a>
+
+  <div class="openings mt-5">
+    <table class="table is-fullwidth is-hoverable is-striped">
+      <tbody>
+        {% for field, value, is_url in data %}
+          <tr>
+            <th>{{ field.verbose_name | title }}</th>
+            {% if is_url %}
+              <td><a target="_blank" href="{{ value }}">{{ value }}</a></td>
+            {% else %}
+              <td>{{ value | default_if_none:'-' }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {{ show }}
+
+{% endblock %}

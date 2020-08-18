@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %} Job - Search {% endblock %}
+
+{% block content %}
+
+  <h1 class="title">
+    Openings
+  </h1>
+
+  <div class="search">
+    <form>
+      <div class="field is-grouped">
+        <p class="control">
+          <input class="input" type="text" name="q" placeholder="Find an opening">
+        </p>
+        <p class="control">
+          <button class="button is-info"  type="submit">
+            Search
+          </button>
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <div class="openings mt-5">
+    <table class="table is-fullwidth is-hoverable is-striped">
+      <thead>
+        <tr>
+          <th>Role Title</th>
+          <th>Company</th>
+          <th>Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for opening in openings %}
+          <tr>
+            <td><a href="{% url 'show' opening.id %}">{{ opening.role_title }}</a></td>
+            <td>{{ opening.company.name }}</td>
+            <td>{{ opening.url }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">No openings found</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}
