@@ -14,7 +14,10 @@
     "salary_range": null,
     "date_active": "2020-08-15",
     "date_inactive": null,
-    "date_created": "2020-08-15"
+    "date_created": "2020-08-15T00:00:00Z",
+    "last_processed": "2020-08-18T23:12:19.624Z",
+    "tsdocument": "'120':81 '189':75 'bank':4,21,40,117 'build':10 'career':12 'challeng':37,110 'client':32 'countri':54,77 'data':98 'dc':124 'dedic':62 'develop':36,53,73,103 'economist':2 'end':64 'extrem':65 'five':60 'fund':49 'global':57,109 'greatest':35 'groundbreak':94 'group':22,41,118 'health':119 'help':30 'humanitarian':121 'increas':67 'inform':113 'institut':61 'invest':92 'knowledg':51 'largest':46 'member':76 'offic':82 'one':43 'opportun':26 'partner':91 'partnership':58 'poverti':66 'privat':89 'project':95 'promot':71 'prosper':69 'provid':23 'public':87 'req8252':5 'research':99 'sector':90 'senior':1 'servic':122 'share':68 'solut':104 'solv':33 'sourc':47 'state':126 'sustain':72 'technolog':101 'truli':15 'uniqu':25,56 'unit':125 'urgent':108 'use':97 'visit':114 'want':8 'washington':123 'work':17,85 'world':3,20,39,116 'worldwid':83 'worthwhil':16 'www.worldbank.org':115",
+    "locations": [1]
   }
 }, {
   "model": "jobs.opening",
@@ -32,7 +35,10 @@
     "salary_range": null,
     "date_active": "2020-08-15",
     "date_inactive": null,
-    "date_created": "2020-08-15"
+    "date_created": "2020-08-15T00:00:00Z",
+    "last_processed": "2020-08-18T23:11:56.435Z",
+    "tsdocument": "'/.':111 '189':67 'advisori':88 'amman':119 'associ':57 'bank':5,22,40,47,74,80,113 'build':11 'career':13 'challeng':37,107 'client':32 'consist':41 'cooper':64 'coordin':101 'countri':69,99 'creditworthi':95 'develop':36,51,56,63,73 'energi':2 'entiti':44 'global':62,106 'greatest':35 'group':114 'guarante':83 'health':115 'help':30 'humanitarian':117 'ibrd':52 'ida':58 'incom':93,98 'intern':46,55 'jordan':120 'largest':72 'loan':82 'low':97 'low-incom':96 'manag':85 'member':68 'middl':92 'middle-incom':91 'opportun':26 'own':65 'product':86 'provid':23,81 'reconstruct':49 'region':104 'req8123':6 'respons':102 'risk':84 'senior':1 'servic':89,118 'solv':33 'specialist':3 'truli':16 'two':43 'uniqu':25 'visit':108 'want':9 'work':18 'world':4,21,39,77,79,112 'worthwhil':17 'www.worldbank.org':110 'www.worldbank.org/.':109",
+    "locations": [2]
   }
 }, {
   "model": "jobs.opening",
@@ -42,7 +48,7 @@
     "role_title": "Senior Investment Officer | IFC | req8313",
     "description": "IFC\u2014a sister organization of the World Bank and member of the World Bank Group\u2014is the largest global development institution focused on the private sector in emerging markets. We work in more than 100 countries, using our capital, expertise, and influence to create markets and opportunities in developing countries. In fiscal year 2019, we invested more than $19 billion in private companies and financial institutions in developing countries, leveraging the power of the private sector to end extreme poverty and boost shared prosperity. For more information, visit www.ifc.org",
     "url": "https://worldbankgroup.csod.com/ats/careersite/JobDetails.aspx?id=8313&site=1",
-    "is_remote": null,
+    "is_remote": false,
     "part_time_permitted": null,
     "has_401k": null,
     "has_dentalins": null,
@@ -50,6 +56,9 @@
     "salary_range": null,
     "date_active": "2020-08-15",
     "date_inactive": null,
-    "date_created": "2020-08-15"
+    "date_created": "2020-08-15T00:00:00Z",
+    "last_processed": "2020-08-18T23:12:29.451Z",
+    "tsdocument": "'100':40 '19':64 '2019':59 'almati':108 'bank':13,19,96 'billion':65 'boost':87 'capit':44 'compani':68 'countri':41,55,74 'creat':49 'develop':25,54,73 'emerg':33 'end':83 'expertis':45 'extrem':84 'financi':70 'fiscal':57 'focus':27 'global':24 'group':20,97 'health':98 'humanitarian':100 'ifc':4,6 'influenc':47 'inform':92 'institut':26,71 'invest':2,61 'istanbul':106 'kazakhstan':109 'kyiv':102 'largest':23 'leverag':75 'market':34,50 'member':15 'offic':3 'opportun':52 'organ':9 'poverti':85 'power':77 'privat':30,67,80 'prosper':89 'req8313':5 'sector':31,81 'senior':1 'servic':101 'share':88 'sister':8 'tashkent':104 'turkey':107 'ukrain':103 'use':42 'uzbekistan':105 'visit':93 'work':36 'world':12,18,95 'www.ifc.org':94 'year':58",
+    "locations": [3, 4, 5, 6]
   }
 }]

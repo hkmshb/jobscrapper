@@ -1,0 +1,43 @@
+[{
+  "model": "jobs.location",
+  "pk": 1,
+  "fields": {
+    "name": "Washington, DC, United States",
+    "geom": "SRID=4326;POINT (-77.05335124054 38.927727751923)"
+  }
+}, {
+  "model": "jobs.location",
+  "pk": 2,
+  "fields": {
+    "name": "Amman, Jordan",
+    "geom": "SRID=4326;POINT (35.899191064453 32.06120830078)"
+  }
+}, {
+  "model": "jobs.location",
+  "pk": 3,
+  "fields": {
+    "name": "Kyiv, Ukraine",
+    "geom": "SRID=4326;POINT (30.515890283201 50.537465625002)"
+  }
+}, {
+  "model": "jobs.location",
+  "pk": 4,
+  "fields": {
+    "name": "Tashkent, Uzbekistan",
+    "geom": "SRID=4326;POINT (69.263296289062 41.30895)"
+  }
+}, {
+  "model": "jobs.location",
+  "pk": 5,
+  "fields": {
+    "name": "Istanbul, Turkey",
+    "geom": "SRID=4326;POINT (28.980550927734 41.02055888672)"
+  }
+}, {
+  "model": "jobs.location",
+  "pk": 6,
+  "fields": {
+    "name": "Almaty, Kazakhstan",
+    "geom": "SRID=4326;POINT (76.959219140625 43.242543750001)"
+  }
+}]

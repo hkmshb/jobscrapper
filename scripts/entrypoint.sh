@@ -29,7 +29,7 @@ case "$1" in
   ;;
 
   loadsample )
-    python webapp/manage.py loaddata companies.json openings.json
+    python webapp/manage.py loaddata companies.json locations.json openings.json
   ;;
 
   manage )

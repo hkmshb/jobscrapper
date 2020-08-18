@@ -6,7 +6,7 @@
     "name_slug": "world-bank-group",
     "industry": "Health and Humanitarian Services",
     "vacancies_url": "https://worldbankgroup.csod.com/ats/careersite/search.aspx",
-    "last_updated": "2020-08-15",
+    "last_updated": "2020-08-15T00:00:00Z",
     "update_freq": 1
   }
 }, {
@@ -17,7 +17,7 @@
     "name_slug": "sequoai",
     "industry": "Finance",
     "vacancies_url": "https://www.sequoiacap.com/jobs",
-    "last_updated": "2020-08-15",
+    "last_updated": "2020-08-15T00:00:00Z",
     "update_freq": 2
   }
 }]
