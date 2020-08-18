@@ -46,10 +46,11 @@ def opening_show(request: HttpRequest, opening_id: int):
     :type opening_id: int
     """
     opening = get_object_or_404(Opening, pk=opening_id)
+    exclude_list = ('id', 'location', 'role_title', 'tsdocument')
 
     data = []
     for field in opening._meta.get_fields():
-        if field.name in ('id', 'location', 'role_title'):
+        if field.name in exclude_list:
             continue
 
         value = field.value_from_object(opening)

@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.gis.db import models as gismodels
 from django.contrib.postgres import fields as pgmodels
+from django.contrib.postgres import search
 
 
 class DurationUnit(Enum):
@@ -73,6 +74,7 @@ class Opening(Entity):
     last_processed = models.DateTimeField(
         'Last Processed', auto_now=True, auto_now_add=False, blank=True, null=True
     )
+    tsdocument = search.SearchVectorField('Document')
 
     def is_match(self, data: dict):
         """[summary]

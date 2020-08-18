@@ -24,3 +24,4 @@ class LocationAdmin(GeoModelAdmin):
 @admin.register(Opening)
 class OpeningAdmin(admin.ModelAdmin):
     list_display = ('role_title', 'company', 'url', 'is_remote', 'has_401k')
+    readonly_fields = ('tsdocument',)
