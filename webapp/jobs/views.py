@@ -18,7 +18,13 @@ def opening_list(request: HttpRequest):
     page_sz = request.GET.get('page_size', PAGE_SIZE)
     search_term = request.GET.get('q')
 
-    openings = Opening.objects.order_by('id').all()
+    # handle search term
+    if search_term:
+        openings = Opening.objects.filter(tsdocument=search_term)
+    else:
+        openings = Opening.objects.all()
+
+    openings = openings.order_by('id')
     p = Paginator(openings, page_sz)
     page = p.get_page(page_no)
 
@@ -46,7 +52,7 @@ def opening_show(request: HttpRequest, opening_id: int):
     :type opening_id: int
     """
     opening = get_object_or_404(Opening, pk=opening_id)
-    exclude_list = ('id', 'location', 'role_title', 'tsdocument')
+    exclude_list = ('id', 'role_title', 'tsdocument')
 
     data = []
     for field in opening._meta.get_fields():
@@ -60,6 +66,12 @@ def opening_show(request: HttpRequest, opening_id: int):
                 model = field.related_model
                 obj = model.objects.get(pk=value)
                 value = str(obj)
+            except Exception:
+                pass
+        elif isinstance(field, models.ManyToManyField):
+            try:
+                labels = [str(x) for x in value]
+                value = '; '.join(labels)
             except Exception:
                 pass
 

@@ -35,7 +35,11 @@
         <tr>
           <th>Role Title</th>
           <th>Company</th>
-          <th>Url</th>
+          <th>Remote</th>
+          <th>401K</th>
+          <th>Dental Ins.</th>
+          <th>Health Ins.</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -43,7 +47,11 @@
           <tr>
             <td><a href="{% url 'show' opening.id %}">{{ opening.role_title }}</a></td>
             <td>{{ opening.company.name }}</td>
-            <td><a target="_blank" href="{{opening.url }}">{{ opening.url }}</a></td>
+            <td>{{ opening.is_remote | default_if_none:'-' }}
+            <td>{{ opening.has_401k | default_if_none:'-' }}
+            <td>{{ opening.has_dentalins | default_if_none:'-' }}
+            <td>{{ opening.has_healthins | default_if_none:'-' }}
+            <td><a target="_blank" href="{{opening.url }}">visit page</a></td>
           </tr>
         {% empty %}
           <tr>
