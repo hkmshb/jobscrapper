@@ -63,9 +63,11 @@ RUN pip install --upgrade pip &&\
     pipenv install --system --deploy
 
 ## Copy the bash script named start.sh to run the Django application to the
-## `/app` folder inside the image.
-COPY ./scripts/start.sh /app/start.sh
-COPY ./scripts/cronjobs /app/cronjobs
+## `/app` folder inside the image as well as other scripts and the cronjobs
+## file.
+COPY ./scripts/start.sh       /app/start.sh
+COPY ./scripts/entrypoint.sh  /app/entrypoint.sh
+COPY ./scripts/cronjobs       /app/cronjobs
 
 ## Download bash script to test and wait on the availability of a TCP host and port
 ADD https://github.com/eficode/wait-for/raw/master/wait-for /app/wait-for.sh
@@ -80,6 +82,8 @@ RUN mkdir -p /app/log &&\
     # redirect cron logs to docker output
     ln -sf /proc/1/fd/1 /app/log/cron.log
 
+## include an entrypoint
+
 ## Set the container user as the user configured with an environment variable
 ## and created above. The docker instructions that follow are executed as the
 ## set user.
@@ -92,7 +96,10 @@ RUN mkdir -p /app/log &&\
 ## host port to docker port binding.
 EXPOSE ${PORT}
 
+## change the entrypoint script
+ENTRYPOINT [ "/app/entrypoint.sh" ]
+
 ## Indicates the command to run on starting up a container from the built image.
 ## The start.sh bash script is executed as the user set above when the container
 ## starts up.
-CMD ["/app/start.sh"]
+CMD [ "/app/start.sh" ]

@@ -28,6 +28,10 @@ psql <<- EOSQL
   CREATE DATABASE "${DJAPP_DBNAME}"
   WITH TEMPLATE template_postgis
        OWNER "${DJAPP_DBUSER}";
+
+  CREATE DATABASE "test_${DJAPP_DBNAME}"
+  WITH TEMPLATE template_postgis
+       OWNER "${DJAPP_DBUSER}";
 EOSQL
 
 echo "***** ENABLE EXTENSIONS *****"

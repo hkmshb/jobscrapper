@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
         parser.add_argument(
             '-f',
-            '--freq_unit',
+            '--freq-unit',
             choices=DurationUnit.values(),
             default=DurationUnit.DAYS.value,
             help='indicates how DurationUnits for update frequency is to be interpreted'
@@ -91,8 +91,7 @@ class Command(BaseCommand):
                 lambda slug: slug not in [c.name_slug for c in companies],
                 name_slugs
             ))
-            raise CommandError(f"Unknown company name slug(s): {', '.join(unknowns)}")
-
+            raise CommandError(f"scraper:: Unknown company name slug(s): {', '.join(unknowns)}")
 
         # determine companies that should be scraped
         ignore_update_freq = options['ignore_update_freq']
@@ -106,8 +105,8 @@ class Command(BaseCommand):
             ))
 
         if not companies:
-            self.stdout.write('No companies up for scraping at this time')
+            self.stdout.write('scraper:: No companies up for scraping at this time')
             sys.exit(0)
 
         ref = 'company' if len(companies) == 1 else 'companies'
-        self.stdout.write(f'{len(companies)} {ref} up for scraping\n')
+        self.stdout.write(f'scraper:: {len(companies)} {ref} up for scraping')
