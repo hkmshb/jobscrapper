@@ -3,13 +3,15 @@
 {% block title %} Job - Search {% endblock %}
 
 {% block content %}
+  <form>
+    <div class="columns">
+      <h1 class="title column is-narrow" style="width: 280px">
+        Openings Search
+      </h1>
+      <div class="column is-narrow"></div>
+    </div>
 
-  <h1 class="title">
-    Openings
-  </h1>
-
-  <div class="search">
-    <form>
+    <div class="search">
       <div class="field is-grouped">
         <p class="control">
           <input
@@ -17,17 +19,20 @@
             type="text"
             name="q"
             placeholder="Find an opening"
-            value={{ q | default_if_none:'' }}
+            value={{ form.q.value | default_if_none:'' }}
           >
+          <div class="select">
+            {{ form.location }}
+          </div>
         </p>
-        <p class="control">
-          <button class="button is-info"  type="submit">
+        <p class="control ml-3">
+          <button class="button is-info" type="submit">
             Search
           </button>
         </p>
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 
   <div class="openings mt-5">
     <table class="table is-fullwidth is-hoverable is-striped">
@@ -65,11 +70,11 @@
   {% if openings.has_other_pages %}
   <nav class="pagination is-small mt-5" role="navigation" aria-label="pagination">
     {% if openings.has_previous %}
-      <a class="pagination-previous" href="?page={{ openings.previous_page_number }}&{{ qs.urlencode }}">Previous</a>
+      <a class="pagination-previous" href="?page={{ openings.previous_page_number }}&{{ form.urlencode }}">Previous</a>
     {% endif %}
 
     {% if openings.has_next %}
-      <a class="pagination-next" href="?page={{ openings.next_page_number }}&{{ qs.urlencode }}">Next page</a>
+      <a class="pagination-next" href="?page={{ openings.next_page_number }}&{{ form.urlencode }}">Next page</a>
     {% endif %}
 
     <ul class="pagination-list">
@@ -78,7 +83,7 @@
           <a
             class="pagination-link {% ifequal page openings.number %} is-current {% endifequal %}"
             aria-label="Goto page {{ page }}"
-            href="?page={{ page }}&{{ qs.urlencode }}"
+            href="?page={{ page }}&{{ form.urlencode }}"
           >
             {{ page }}
           </a>

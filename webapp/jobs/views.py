@@ -1,12 +1,13 @@
 from django.core.paginator import Paginator
 from django.db import models
-from django.http import HttpRequest
+from django.http import HttpRequest, QueryDict
 from django.shortcuts import render, get_object_or_404
 
 from jobs.models import Opening
+from jobs.forms import SearchForm
+
 
 PAGE_SIZE = 25
-
 
 def opening_list(request: HttpRequest):
     """Renders page listing openings.
@@ -14,32 +15,28 @@ def opening_list(request: HttpRequest):
     :param request: HTTP request object
     :type request: HttpRequest
     """
-    page_no = request.GET.get('page', 1)
-    page_sz = request.GET.get('page_size', PAGE_SIZE)
-    search_term = request.GET.get('q')
+    form = SearchForm(request.GET)
+    if not form.is_valid():
+        return (render, 'jobs/list.html', {
+            'errors': form.errors
+        })
 
-    # handle search term
-    if search_term:
-        openings = Opening.objects.filter(tsdocument=search_term)
-    else:
+    data = form.clean()
+    if 'q' not in data or not data['q']:
         openings = Opening.objects.all()
+    else:
+        openings = Opening.objects.filter(tsdocument=data.get('q'))
 
+
+    # paginate results
     openings = openings.order_by('id')
-    p = Paginator(openings, page_sz)
-    page = p.get_page(page_no)
+    p = Paginator(openings, data.get('page_size') or PAGE_SIZE)
+    page = p.get_page(data.get('page') or 1)
 
-    # update querystring
-    qs = request.GET.copy()
-    if 'page' in qs:
-        del qs['page']
-
-    if 'q' in qs and not search_term:
-        del qs['q']
-
+    # extract and return set query string values
     return render(request, 'jobs/list.html', {
         'openings': page,
-        'q': search_term,
-        'qs': qs,
+        'form': form
     })
 
 
