@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Openinigs{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'bulma.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bulma-switch.min.css' %}">
   </head>
   <body>
   <section class="section">
@@ -14,5 +15,8 @@
       {% block content %}{% endblock %}
     </div>
   </section>
+
+  <script type="text/javascript" src="{% static 'nanojs.min.js' %}"></script>
+  {% block scripts %}{% endblock %}
   </body>
 </html>

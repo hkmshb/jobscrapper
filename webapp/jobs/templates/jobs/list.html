@@ -8,6 +8,18 @@
       <h1 class="title column is-narrow" style="width: 280px">
         Openings Search
       </h1>
+      <div class="column is-narrow" style="width: 200px; margin-top: 9px">
+        <input
+          id="is_spatial"
+          type="checkbox"
+          name="is_spatial"
+          class="switch is-rounded is-info is-small"
+          {% if form.is_spatial.value %}
+            checked="checked"
+          {% endif %}
+        >
+        <label for="is_spatial">Geospatial</label>
+      </div>
       <div class="column is-narrow"></div>
     </div>
 
@@ -21,7 +33,10 @@
             placeholder="Find an opening"
             value={{ form.q.value | default_if_none:'' }}
           >
-          <div class="select">
+          <div
+            id="locations"
+            class="select {% if form.is_spatial.value is False %}is-hidden{% endif %}"
+          >
             {{ form.location }}
           </div>
         </p>
@@ -93,4 +108,25 @@
   </nav>
   {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    window.addEventListener("load", function() {
+      var spatial = $('#is_spatial');
+      var locations = $('#locations');
+
+      if (spatial.value[0] && locations.value[0]) {
+        spatial.on('click', function() {
+          var checked = spatial.value[0].checked;
+          if (checked) {
+            locations.removeClass("is-hidden");
+          } else {
+            locations.addClass("is-hidden");
+            locations.value[0].children[0].selectedIndex = 0;
+          }
+        });
+      }
+    });
+  </script>
 {% endblock %}
