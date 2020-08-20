@@ -3,6 +3,8 @@
 {% block title %} Job - Search {% endblock %}
 
 {% block content %}
+  {{ form.non_field_errors }}
+
   <form>
     <div class="columns">
       <h1 class="title column is-narrow" style="width: 280px">
@@ -26,18 +28,22 @@
     <div class="search">
       <div class="field is-grouped">
         <p class="control">
-          <input
-            class="input"
-            type="text"
-            name="q"
-            placeholder="Find an opening"
-            value={{ form.q.value | default_if_none:'' }}
-          >
-          <div
-            id="locations"
-            class="select {% if form.is_spatial.value is False %}is-hidden{% endif %}"
-          >
-            {{ form.location }}
+          <div>
+            <input
+              class="input {% if form.q.errors %}is-danger{% endif %}"
+              type="text"
+              name="q"
+              placeholder="Find an opening"
+              value={{ form.q.value | default_if_none:'' }}
+            >
+            <span class="is-size-7 is-italic has-text-danger">{{ form.q.errors }}</span>
+          </div>
+
+          <div id="locations" class="ml-3 {% if form.is_spatial.value is False %}is-hidden{% endif %}">
+            <div class="select {% if form.location.errors %} is-danger {% endif %}">
+              {{ form.location }}
+            </div>
+            <span class="is-size-7 is-italic has-text-danger">{{ form.location.errors }}</span>
           </div>
         </p>
         <p class="control ml-3">
@@ -129,7 +135,7 @@
             locations.removeClass("is-hidden");
           } else {
             locations.addClass("is-hidden");
-            locations.value[0].children[0].selectedIndex = 0;
+            $('#id_location').value[0].selectedIndex = 0;
           }
         });
       }

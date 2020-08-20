@@ -23,22 +23,25 @@ def opening_list(request: HttpRequest):
     data = form.clean()
     locations = []  # matched locations from spatial search
 
-    if 'q' not in data or not data['q']:
-        openings = Opening.objects.all()
+    q = data.get('q')
+    is_spatial = data.get('is_spatial') or False
+
+    openings = Opening.objects.all()
+    if not is_spatial:
+        # perform full-text search if term provided
+        if q:
+            openings = openings.filter(tsdocument=q)
     else:
-        is_spatial = data.get('is_spatial') or False
-        if not is_spatial:
-            # perform full-text search
-            openings = Opening.objects.filter(tsdocument=data.get('q'))
+        location = data.get('location')
+        if not q:
+            locations = [location]
         else:
-            # perform spatial search
-            location = data.get('location')
             locations = Location.objects.filter(
-                geom__distance_lte=(location.geom, D(mi=int(data.get('q'))))
+                geom__distance_lte=(location.geom, D(mi=int(q)))
             )
 
-            # find openings with locations
-            openings = Opening.objects.filter(locations__in=locations).distinct()
+        # filter openings by locations
+        openings = openings.filter(locations__in=locations).distinct()
 
     # paginate results
     openings = openings.order_by('id')

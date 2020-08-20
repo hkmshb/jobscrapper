@@ -2,6 +2,8 @@ from urllib.parse import urlencode
 
 from django import forms
 from django.db import models
+from django.core.exceptions import ValidationError
+
 from jobs.models import Location
 
 
@@ -32,3 +34,19 @@ class SearchForm(PagingForm):
             if get(value) and key != 'page'
         }
         return urlencode(data)
+
+    def clean(self):
+        data = super().clean()
+        is_spatial = data.get('is_spatial') or False
+        location = data.get('location') or None
+        q = data.get('q') or None
+
+        if is_spatial:
+            if not location:
+                self.add_error('location', 'Field is required')
+
+            # ensure q is numberic
+            if q and not q.isnumeric():
+                self.add_error('q', 'Numeric value expected')
+
+        return  data
