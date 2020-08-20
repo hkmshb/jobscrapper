@@ -49,6 +49,12 @@
     </div>
   </form>
 
+  {% if locations %}
+  <div class="mt-3">
+    <b>Matched Locations:</b> {% for loc in locations %} {{ loc.name }}; {% endfor %}
+  </div>
+  {% endif %}
+
   <div class="openings mt-5">
     <table class="table is-fullwidth is-hoverable is-striped">
       <thead>

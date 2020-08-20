@@ -1,10 +1,11 @@
+from django.contrib.gis.measure import D
 from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, QueryDict
 from django.shortcuts import render, get_object_or_404
 
-from jobs.models import Opening
 from jobs.forms import SearchForm
+from jobs.models import Opening, Location
 
 
 PAGE_SIZE = 25
@@ -17,16 +18,27 @@ def opening_list(request: HttpRequest):
     """
     form = SearchForm(request.GET)
     if not form.is_valid():
-        return (render, 'jobs/list.html', {
-            'errors': form.errors
-        })
+        return render(request, 'jobs/list.html', { 'form': form })
 
     data = form.clean()
+    locations = []  # matched locations from spatial search
+
     if 'q' not in data or not data['q']:
         openings = Opening.objects.all()
     else:
-        openings = Opening.objects.filter(tsdocument=data.get('q'))
+        is_spatial = data.get('is_spatial') or False
+        if not is_spatial:
+            # perform full-text search
+            openings = Opening.objects.filter(tsdocument=data.get('q'))
+        else:
+            # perform spatial search
+            location = data.get('location')
+            locations = Location.objects.filter(
+                geom__distance_lte=(location.geom, D(mi=int(data.get('q'))))
+            )
 
+            # find openings with locations
+            openings = Opening.objects.filter(locations__in=locations).distinct()
 
     # paginate results
     openings = openings.order_by('id')
@@ -35,6 +47,7 @@ def opening_list(request: HttpRequest):
 
     # extract and return set query string values
     return render(request, 'jobs/list.html', {
+        'locations': locations,
         'openings': page,
         'form': form
     })

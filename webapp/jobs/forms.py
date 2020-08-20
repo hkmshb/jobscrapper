@@ -29,6 +29,6 @@ class SearchForm(PagingForm):
         data = {
             key: get(value)
             for key, value in self.clean().items()
-            if value and key != 'page'
+            if get(value) and key != 'page'
         }
         return urlencode(data)
