@@ -7,16 +7,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobs', '0005_auto_20200818_1751'),
+        ('jobs', '0001_initial'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='opening',
-            name='tsdocument',
-            field=django.contrib.postgres.search.SearchVectorField(default='', verbose_name='Document'),
-            preserve_default=False,
-        ),
         migrations.RunSQL("""
             -- create GIN (Generalized Inverted Index) index on the tsdocument
             CREATE INDEX gidx_tsdocument ON jobs_opening

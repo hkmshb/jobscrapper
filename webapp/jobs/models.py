@@ -2,10 +2,12 @@ import re
 from enum import Enum
 
 from django.db import models
-from django.utils.text import slugify
 from django.contrib.gis.db import models as gismodels
 from django.contrib.postgres import fields as pgmodels
 from django.contrib.postgres import search
+from django.utils.text import slugify
+
+from core.models import Entity
 
 
 class DurationUnit(Enum):
@@ -15,16 +17,6 @@ class DurationUnit(Enum):
     @classmethod
     def values(cls):
         return [e.value for e in list(cls)]
-
-
-class Entity(models.Model):
-    """Abstract base models for all models in the application. Defines common attribute
-    used in all models in the application.
-    """
-    id = models.BigAutoField(primary_key=True)
-
-    class Meta:
-        abstract = True
 
 
 class Company(Entity):

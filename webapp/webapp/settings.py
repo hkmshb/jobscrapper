@@ -48,6 +48,7 @@ ALLOWED_HOSTS = [ *get_env_value('ALLOWED_HOSTS', '').split(',') ]
 # Application definition
 
 INSTALLED_APPS = [
+    'core.apps.CoreConfig',
     'jobs.apps.JobsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -143,5 +144,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static/"),
+    os.path.join(BASE_DIR, "static"),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+AUTH_USER_MODEL = 'core.User'

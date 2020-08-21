@@ -2,12 +2,13 @@
 
 import os
 from django.db import migrations
+from django.contrib.auth import get_user_model
 
 
 def forwards_func(apps, schema_editor):
     """Creates a Django Admin SuperUser for the setup.
     """
-    from django.contrib.auth.models import User
+    User = get_user_model()
 
     # retrieve env vars
     SU_NAME = os.environ.get('DJAPP_SU_NAME')
@@ -26,7 +27,7 @@ def forwards_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobs', '0001_initial'),
+        ('core', '0001_initial'),
     ]
 
     operations = [
