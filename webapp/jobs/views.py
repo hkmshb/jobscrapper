@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, QueryDict
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 from jobs.forms import SearchForm
 from jobs.models import Opening, Location
@@ -10,6 +11,8 @@ from jobs.models import Opening, Location
 
 PAGE_SIZE = 25
 
+
+@login_required
 def opening_list(request: HttpRequest):
     """Renders page listing openings.
 
@@ -56,6 +59,7 @@ def opening_list(request: HttpRequest):
     })
 
 
+@login_required
 def opening_show(request: HttpRequest, opening_id: int):
     """Renders the details page for an opening
 

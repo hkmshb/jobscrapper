@@ -2,15 +2,16 @@
 
 {% block title %} Job - Search {% endblock %}
 
+{% block header_level_left %}
+  <h1 class="title">
+    {{ opening.role_title }}
+  </h1>
+{% endblock %}
+
 {% block content %}
-
-    <h1 class="title">
-      {{ opening.role_title }}
-    </h1>
-
-    <a class="button is-small is-link is-light" href="/">
-      Back
-    </a>
+  <a class="button is-small is-link is-light" href="/">
+    Back
+  </a>
 
   <div class="openings mt-5">
     <table class="table is-fullwidth is-hoverable is-striped">

@@ -2,21 +2,48 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Openinigs{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'bulma.min.css' %}">
-    <link rel="stylesheet" href="{% static 'bulma-switch.min.css' %}">
-  </head>
-  <body>
-  <section class="section">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block head_title %}Openings{% endblock %}</title>
+  {% block extra_head %}
+  <link rel="stylesheet" href="{% static 'bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bulma-switch.min.css' %}">
+  {% endblock %}
+</head>
+<body>
+  {% if messages %}
+  <ul class="notification is-primary is-light pt-3 pb-3 mb-0">
+    {% for message in messages %}
+    <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <section class="section pt-5">
     <div class="container">
+      {% if user.is_authenticated %}
+      <nav class="level">
+        <!-- Left side -->
+        <div class="level-left">
+          {% block header_level_left %}{% endblock %}
+        </div>
+
+        <!-- Right side -->
+        <div class="level-right">
+          <p class="level-item"><b>{{ user.username }}</b></p>
+          <p class="level-item">|</p>
+          <p class="level-item"><a href="/accounts/logout">Logout</a></p>
+        </div>
+      </nav>
+      <hr />
+      {% endif %}
+
       {% block content %}{% endblock %}
     </div>
   </section>
 
   <script type="text/javascript" src="{% static 'nanojs.min.js' %}"></script>
-  {% block scripts %}{% endblock %}
-  </body>
+  {% block extra_body %}{% endblock %}
+</body>
 </html>

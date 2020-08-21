@@ -1,31 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %} Job - Search {% endblock %}
+{% block head_title %} Openings - Search {% endblock %}
 
-{% block content %}
-  {{ form.non_field_errors }}
-
-  <form>
-    <div class="columns">
-      <h1 class="title column is-narrow" style="width: 280px">
-        Openings Search
-      </h1>
-      <div class="column is-narrow" style="width: 200px; margin-top: 9px">
-        <input
-          id="is_spatial"
-          type="checkbox"
-          name="is_spatial"
-          class="switch is-rounded is-info is-small"
-          {% if form.is_spatial.value %}
-            checked="checked"
-          {% endif %}
-        >
-        <label for="is_spatial">Geospatial</label>
-      </div>
-      <div class="column is-narrow"></div>
-    </div>
-
-    <div class="search">
+{% block header_level_left %}
+  <div class="level-item">
+    <form>
       <div class="field is-grouped">
         <p class="control">
           <div>
@@ -51,15 +30,35 @@
             Search
           </button>
         </p>
+        <input type="hidden" id="is_spatial" name="is_spatial" value="{{ form.is_spatial.value }}">
       </div>
-    </div>
-  </form>
-
-  {% if locations %}
-  <div class="mt-3">
-    <b>Matched Locations:</b> {% for loc in locations %} {{ loc.name }}; {% endfor %}
+    </form>
   </div>
-  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="pb-5" style="margin-top: -15px;">
+    <div class="is-narrow pb-5 is-pulled-right">
+      <input
+        id="is_spatial_ctrl"
+        type="checkbox"
+        name="is_spatial_ctrl"
+        class="switch is-rounded is-info is-small"
+        {% if form.is_spatial.value %}
+          checked="checked"
+        {% endif %}
+      >
+      <label for="is_spatial_ctrl">Enable Geospatial Search</label>
+    </div>
+
+    {% if locations %}
+    <div class="is-pulled-left">
+      <b>Matched Locations:</b> {% for loc in locations %} {{ loc.name }}; {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {{ form.non_field_errors }}
 
   <div class="openings mt-5">
     <table class="table is-fullwidth is-hoverable is-striped">
@@ -122,15 +121,18 @@
 
 {% endblock %}
 
-{% block scripts %}
+{% block extra_body %}
   <script type="text/javascript">
     window.addEventListener("load", function() {
-      var spatial = $('#is_spatial');
+      var spatial_ctrl = $('#is_spatial_ctrl');
       var locations = $('#locations');
+      var spatial = $('#is_spatial');
 
-      if (spatial.value[0] && locations.value[0]) {
-        spatial.on('click', function() {
-          var checked = spatial.value[0].checked;
+      if (spatial_ctrl.value[0] && locations.value[0]) {
+        spatial_ctrl.on('click', function() {
+          var checked = spatial_ctrl.value[0].checked;
+          spatial.value[0].value = checked;
+
           if (checked) {
             locations.removeClass("is-hidden");
           } else {
