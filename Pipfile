@@ -9,6 +9,7 @@ parameterized = "*"
 [packages]
 django = "==3.0.8"
 django-dotenv = "*"
+django-allauth = "*"
 geopy = "==2.0.0"
 glom = "*"
 psycopg2-binary = "==2.8.5"

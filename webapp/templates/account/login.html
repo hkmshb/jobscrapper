@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="columns">
+
+    <form class="column is-4 is-offset-4" action="/accounts/login/" method="post">
+      {% csrf_token %}
+
+      <p>
+        <h1 class="title is-4 has-text-centered">Sign In</h1>
+      </p>
+      <div class="field">
+        <p class="control">
+          <input
+            class="input"
+            type="text"
+            name="login"
+            placeholder="Username"
+            value="{{ form.login.value | default_if_none:'' }}"
+            required
+          >
+        </p>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="password" name="password" placeholder="Password" required>
+        </p>
+      </div>
+      <div class="field">
+        <p class="control">
+          <button class="button is-success is-fullwidth">
+            Login
+          </button>
+          <p class="is-size-7 has-text-centered mt-4">
+            <a href="/accounts/password/reset">Forgot Password?</a>
+            <span> | </span>
+            <a href="/accounts/signup">Register</a>
+          </p>
+        </p>
+      </div>
+
+      {{ form.non_field_errors }}
+    </form>
+  </div>
+{% endblock %}
