@@ -1,5 +1,18 @@
 # CHANGE LOG
 
+## 2020.08.21
+
+- Added `core` app with custom user and some other models
+- Refactored entire migrations for the application
+  - move superuser creation migration from the `jobs` app to the new `core` app
+  - add trigger creation migration which auto-updates the column which supports FTS on the app
+- Added `django.contrib.postgres` and `django.contrib.gis` to `INSTALLED_APPS` to use models
+  that support storing and managing spatial data
+- Extended `views.py` to implement both FTS-based and spatial-based search
+- Added static resources `bulma.min.css`, `bulma-switch.min.css` and `nanojs.min.js` used within
+  the list and details view for openings.
+- Added more columns the openings table displayed on the landing page
+
 ## 2020.08.17
 
 - Updated `Company` and `Opening` models
