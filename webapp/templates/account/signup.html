@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="columns">
+    <form
+      action="/accounts/signup/"
+      class="column is-4 is-offset-4"
+      enctype="multipart/form-data"
+      method="post"
+    >
+      {% csrf_token %}
+
+      <p>
+        <h1 class="title is-4 has-text-centered">Sign Up</h1>
+      </p>
+      <div class="field">
+        <p class="control">
+          <input
+            class="input"
+            type="text"
+            name="username"
+            placeholder="Username"
+            value="{{ form.username.value | default_if_none:'' }}"
+            required
+          >
+        </p>
+        <span class="is-size-7 is-italic has-text-danger">{{ form.username.errors }}</span>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="email" name="email" placeholder="Email" value="{{ form.email.value | default_if_none:'' }}">
+        </p>
+        <span class="is-size-7 is-italic has-text-danger">{{ form.email.errors }}</span>
+      </div>
+      <div class="field">
+        <p class="control">
+          <textarea class="textarea" name="description" placeholder="Description">{{ form.description.value | default_if_none:'' }}</textarea>
+        </p>
+        <span class="is-size-7 is-italic has-text-danger">{{ form.description.errors }}</span>
+      </div>
+      <div class="field">
+        <p class="control">
+          <div class="file has-name">
+            <label id="document" class="file-label">
+              <input class="file-input" type="file" name="document">
+              <span class="file-cta">
+                <span class="file-label">
+                  Document...
+                </span>
+              </span>
+              <span class="file-name">{{ form.document.value.filename }}</span>
+            </label>
+          </div>
+        </p>
+        <span class="is-size-7 is-italic has-text-danger">{{ form.document.errors }}</span>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="password" name="password1" placeholder="Password">
+        </p>
+        <span class="is-size-7 is-italic has-text-danger">{{ form.password1.errors }}</span>
+      </div>
+      <div class="field">
+        <p class="control">
+          <input class="input" type="password" name="password2" placeholder="Password (again)">
+        </p>
+        <span class="is-size-7 is-italic has-text-danger">{{ form.password2.errors }}</span>
+      </div>
+      <div class="field">
+        <p class="control">
+          <button class="button is-success is-fullwidth">
+            Sign Up
+          </button>
+          <p class="is-size-7 has-text-centered mt-4">
+            Already have an account? Then please <a href="/accounts/login">sign in</a>.
+          </p>
+        </p>
+      </div>
+
+      {{ form.non_field_errors }}
+    </form>
+  </div>
+{% endblock %}
+
+{% block extra_body %}
+  <script type="text/javascript">
+    window.addEventListener("load", function() {
+      const input = $('#document input[type=file]');
+      input.on('change', function() {
+        const name = $('#document .file-name');
+        name.value[0].textContent = input.value[0].files[0].name;
+      });
+    });
+  </script>
+{% endblock %}
