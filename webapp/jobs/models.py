@@ -60,6 +60,7 @@ class Location(Entity):
 class Opening(Entity):
     """Defines fields for recording job opening details.
     """
+    entry_hash = models.CharField('Title Hash', max_length=200, unique=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     locations = models.ManyToManyField(Location, blank=True)
     role_title = models.CharField('Role Title', max_length=100)
@@ -82,7 +83,7 @@ class Opening(Entity):
     tsdocument = search.SearchVectorField('Document')
 
     def is_match(self, data: dict):
-        """[summary]
+        """Returns True if data matches opening details otherwise False.
 
         :param data: details to match against this opening instance.
         :type data: dict
