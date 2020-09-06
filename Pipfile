@@ -12,7 +12,10 @@ django-dotenv = "*"
 django-allauth = "*"
 geopy = "==2.0.0"
 glom = "*"
+html5lib = "*"
+lxml = "*"
 psycopg2-binary = "==2.8.5"
+requests-html = "*"
 
 [requires]
 python_version = "3.8"

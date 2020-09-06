@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from jobs.models import Company, DurationUnit
 from jobs.utils import has_duration_elapsed
+from jobs.scraper import Engine
 
 
 class Command(BaseCommand):
@@ -110,3 +111,7 @@ class Command(BaseCommand):
 
         ref = 'company' if len(companies) == 1 else 'companies'
         self.stdout.write(f'scraper:: {len(companies)} {ref} up for scraping')
+
+        # run scraping engine for identified companies
+        engine = Engine(companies)
+        engine.execute()
