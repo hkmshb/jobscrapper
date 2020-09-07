@@ -29,8 +29,20 @@ case "$1" in
   ;;
 
   loadsample )
-    python webapp/manage.py loaddata companies.json locations.json
-    python webapp/manage.py loaddata openings.json
+    case "$2" in
+      --companies )
+        python webapp/manage.py loaddata companies.json locations.json
+      ;;
+
+      --openings )
+        python webapp/manage.py loaddata openings.json
+      ;;
+
+      * )
+        python webapp/manage.py loaddata companies.json locations.json
+        python webapp/manage.py loaddata openings.json
+      ;;
+    esac
   ;;
 
   manage )
