@@ -1,2 +1,2 @@
 # run the scrapejobs every 1 minues of every day (using webapp user)
-*/15  *  *  *  *  root python /app/webapp/manage.py scrapejobs --freq-unit hours > /app/log/cron.log 2>&1
+*  */12  *  *  *  root python /app/webapp/manage.py scrapejobs --freq-unit hours > /app/log/cron.log 2>&1
