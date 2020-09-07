@@ -2,30 +2,57 @@
 """
 import hashlib
 import logging
-from datetime import datetime
-from time import sleep
+import time
+
 from collections import namedtuple
+from dataclasses import dataclass
+from datetime import datetime
+from urllib.parse import urljoin
 from typing import Dict, Iterable, List
 
 from requests_html import Element, HTMLResponse, HTMLSession
-from jobs.models import Company, Opening
+from jobs.models import Company, Location, Opening
 
 
 log = logging.getLogger(__name__)
 
 Job = namedtuple('Job', ['data', 'hash', 'page_no'])
+JobDetail = namedtuple('JobDetail', [
+    'company', 'locations', 'entry_hash', 'role_title', 'description', 'url',
+    'has_dentalins', 'has_healthins', 'is_remote', 'has_401k', 'salary_range',
+    'part_time_permitted', 'date_active', 'date_inactive', 'last_processed'
+], defaults=(None,) * 15)
 Page = namedtuple('Page', ['jobs', 'paging'])
 ScrapResult = namedtuple('ScrapResult', ['company', 'job', 'scraper'])
-Stats = namedtuple('Stats', ['created', 'failed', 'updated', 'ignored'])
+
+@dataclass
+class Stats:
+    created: int = 0
+    failed: int = 0
+    updated: int = 0
+    ignored: int = 0
 
 
 class SiteScraper:
     """Scraps a site to collect all job listings.
     """
+
+    def get_locations(self, location_names: List[str]) -> List[Location]:
+        """Retrives locations matching provided names.
+
+        :param location_names: names of locations to retrieve
+        :type location_names: List[str]
+        :return: locations matching provided names.
+        :rtype: List[Location]
+        """
+        if location_names:
+            return Location.objects.filter(name__in=location_names)
+        return []
+
     def scrap_vacancies(self) -> List[Job]:
         raise NotImplementedError()
 
-    def scrap_vacancy_details(self, job: Job):
+    def scrap_vacancy_details(self, company: Company, job: Job):
         raise NotImplementedError()
 
 
@@ -34,7 +61,7 @@ class WorldBankGroupScraper(SiteScraper):
     """
     ID = 'world-bank-group'
     VIEW_FIELDS = ['__VIEWSTATE', '__VIEWSTATEGENERATOR']
-    FORMS_DATA = {
+    FORM_DATA = {
         '__ASYNCPOST': True,
         '__EVENTTARGET': 'ctl00$siteContent$widgetLayout$rptWidgets$ctl03$widgetContainer$ctl00$btnSearch',
         'ctl00$ScriptManager': 'ctl00$siteContent$widgetLayout$rptWidgets$ctl03$widgetContainer$ctl00$ctl00|ctl00$siteContent$widgetLayout$rptWidgets$ctl03$widgetContainer$ctl00$btnSearch',
@@ -101,7 +128,7 @@ class WorldBankGroupScraper(SiteScraper):
                 }
             }))
 
-            return jobs
+        return jobs
 
     def _update_state(self, res: HTMLResponse) -> None:
         self.form_state.clear()
@@ -114,7 +141,6 @@ class WorldBankGroupScraper(SiteScraper):
 
     def _get_page(self, page_no: str = '1', event_target: str = None) -> Page:
         log.debug(f'processing page {page_no} ...')
-
         data = {**self.FORM_DATA, **self.form_state}
         if event_target:
             data.update({
@@ -133,18 +159,47 @@ class WorldBankGroupScraper(SiteScraper):
 
     def scrap_vacancies(self) -> List[Job]:
         log.debug(f'processing page: {self.url} ...')
-        (jobs, paging) = self._get_page()
+        res = self.session.get(self.url)
+        res.raise_for_status()
+        self._update_state(res)
 
+        (jobs, paging) = self._get_page()
         for page_info in paging[1:]:
-            sleep(15)
+            time.sleep(15)
             page = self._get_page(**page_info)
             jobs.extend(page.jobs)
 
-        log.debug(f'{len(jobs)} extracted ...')
+        log.debug(f'{len(jobs)} job(s) extracted ...')
         return jobs
 
-    def scrap_vacancy_details(self, job: Job):
-        raise NotImplementedError()
+    def scrap_vacancy_details(self, company: Company, job: Job) -> JobDetail:
+        session = HTMLSession()
+        job_url = urljoin(self.url, job.data['href'])
+        res = session.get(job_url)
+        res.raise_for_status()
+
+        # extract page contents
+        content = res.html.find('.cs-atscs-jobdet-rtpane', first=True)
+        info, desc = content.find('table')
+        title = content.find('p > span', first=True).text
+
+        rows = [[td.text for td in tr.find('td')] for tr in info.find('tr')]
+        role_title = f'{title} | {rows[1][1]} | {rows[0][1]}'
+
+        locations = []
+        if len(rows) >= 7:
+            location_names = [name.strip() for name in rows[6][1].split(';')]
+            locations = self.get_locations(location_names)
+
+        return  JobDetail(
+            entry_hash=job.hash,
+            company=company,
+            date_active=datetime.today(),
+            description=desc.text,
+            locations=locations,
+            role_title=role_title,
+            url=job_url,
+        )
 
 
 class Engine:
@@ -155,7 +210,7 @@ class Engine:
     }
 
     stats = {
-        WorldBankGroupScraper.ID: Stats(0, 0, 0, 0)
+        WorldBankGroupScraper.ID: Stats(created=0, failed=0, updated=0, ignored=0)
     }
 
     def __init__(self, companies: List[Company]):
@@ -185,13 +240,14 @@ class Engine:
     def process_vacancy(self, result: ScrapResult):
         # scrap job details
         (company, job, scraper) = result
-        job_detail = scraper.scrap_vacancy_details(job)
+        job_detail = scraper.scrap_vacancy_details(company, job)
         stat = self.stats[company.name_slug]
 
-        opening = Opening.objects.filter(entry_hash=result.job.hash)
-        if len(opening) == 1:
+        openings = Opening.objects.filter(entry_hash=result.job.hash)
+        if len(openings) == 1:
             # check if job is to be updated
-            if not opening.is_match(job_detail):
+            opening = openings.first()
+            if not opening.is_match({ 'job': job_detail._asdict() }):
                 log.debug('Updating existing job ...')
                 opening.description = job_detail.description
                 opening.save()
@@ -203,7 +259,13 @@ class Engine:
 
         # persist new job
         log.debug('Saving new job ...')
-        opening = Opening(**job_detail)
+        data = job_detail._asdict()
+        locations = data.pop('locations')
+
+        opening = Opening(**data)
+        if locations:
+            opening.locations.add(*locations)
+
         opening.save()
         stat.created += 1
 
@@ -215,9 +277,9 @@ class Engine:
         try:
             for result in self.scrap_vacancies():
                 try:
-                    sleep(10)
+                    time.sleep(10)
                     self.process_vacancy(result)
-                    sleep(10)
+                    time.sleep(10)
                 except Exception as ex:
                     log.error(ex)
                     stat = self.stats[result.company.name_slug]
