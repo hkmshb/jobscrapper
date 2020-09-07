@@ -95,6 +95,10 @@
 
   {% if openings.has_other_pages %}
   <nav class="pagination is-small mt-5" role="navigation" aria-label="pagination">
+    <span class="pagination-previous" style="border: none;">
+      {{ openings.start_index }} - {{ openings.end_index }} of {{ openings.paginator.count }}
+    </span>
+
     {% if openings.has_previous %}
       <a class="pagination-previous" href="?page={{ openings.previous_page_number }}&{{ form.urlencode }}">Previous</a>
     {% endif %}
