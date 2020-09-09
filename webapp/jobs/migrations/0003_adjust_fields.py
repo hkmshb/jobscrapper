@@ -23,4 +23,8 @@ class Migration(migrations.Migration):
             field=models.CharField(default=datetime.datetime.now, max_length=200, unique=True, verbose_name='Title Hash'),
             preserve_default=False,
         ),
+        migrations.RemoveField(
+            model_name='opening',
+            name='last_processed',
+        ),
     ]

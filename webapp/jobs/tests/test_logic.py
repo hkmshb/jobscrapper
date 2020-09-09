@@ -36,7 +36,6 @@ class OpeningTestCase(OpeningTestBase):
     @parameterized.expand([
         ({'company': '?', 'job': {'description': 'description changed'}}, 1, False),
         ({'company': '?', 'job': {'role_title': 'title changed'}}, 1, False),
-        ({'company': '?', 'job': {'last_processed': '2020-08-16'}}, 1, True),
         ({'company': '?', 'job': {'date_active': '2020-08-16'}}, 1, True),
         ({'company': '?', 'job': {'date_inactive': '2020-08-16'}}, 1, True),
         ({'company': '?', 'job': {'date_created': '2020-08-16'}}, 1, True)

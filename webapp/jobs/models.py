@@ -77,9 +77,6 @@ class Opening(Entity):
         'Date Inactive', auto_now=False, auto_now_add=False, blank=True, null=True
     )
     date_created = models.DateTimeField('Date Created', auto_now=False, auto_now_add=True)
-    last_processed = models.DateTimeField(
-        'Last Processed', auto_now=True, auto_now_add=False, blank=True, null=True
-    )
     tsdocument = search.SearchVectorField('Document')
 
     def is_match(self, data: dict):
@@ -90,7 +87,7 @@ class Opening(Entity):
         """
         pattern = re.compile('date_*')
         exclude_list = (
-            'id', 'company', 'locations', 'last_processed', 'entry_hash', 'tsdocument'
+            'id', 'company', 'locations', 'entry_hash', 'tsdocument'
         )
 
         field_names = list(filter(

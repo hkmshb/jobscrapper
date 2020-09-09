@@ -22,8 +22,8 @@ Job = namedtuple('Job', ['data', 'hash', 'page_no'])
 JobDetail = namedtuple('JobDetail', [
     'company', 'locations', 'entry_hash', 'role_title', 'description', 'url',
     'has_dentalins', 'has_healthins', 'is_remote', 'has_401k', 'salary_range',
-    'part_time_permitted', 'date_active', 'date_inactive', 'last_processed'
-], defaults=(None,) * 15)
+    'part_time_permitted', 'date_active', 'date_inactive'
+], defaults=(None,) * 14)
 Page = namedtuple('Page', ['jobs', 'paging'])
 ScrapResult = namedtuple('ScrapResult', ['company', 'job', 'scraper'])
 
