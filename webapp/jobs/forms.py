@@ -15,6 +15,7 @@ class PagingForm(forms.Form):
 class SearchForm(PagingForm):
     q = forms.CharField(required=False, max_length=100, strip=True)
     is_spatial = forms.BooleanField(required=False, initial=False)
+    include_inactive = forms.BooleanField(required=False, initial=False)
     location = forms.ModelChoiceField(
         empty_label="(Select Location)",
         required=False,

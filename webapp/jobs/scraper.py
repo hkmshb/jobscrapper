@@ -53,7 +53,6 @@ class Stats:
         ).format(stat=stat)
 
 
-
 class SiteScraper:
     """Scraps a site to collect all job listings.
     """
@@ -66,9 +65,21 @@ class SiteScraper:
         :return: locations matching provided names.
         :rtype: List[Location]
         """
+        locations = []
         if location_names:
-            return Location.objects.filter(name__in=location_names)
-        return []
+            locations = list(Location.objects.filter(name__in=location_names))
+
+        if len(locations) < len(location_names):
+            known_names = {loc.name for loc in locations}
+            for name in set(location_names).difference(known_names):
+                loc = Location(name=name)
+                try:
+                    loc.save()
+                    locations.append(loc)
+                except Exception:
+                    pass
+
+        return locations
 
     def scrape_vacancies(self) -> List[Job]:
         raise NotImplementedError()
@@ -286,11 +297,11 @@ class Engine:
         locations = data.pop('locations')
 
         opening = Opening(**data)
+        opening.save()
+
+        stat.created += 1
         if locations:
             opening.locations.add(*locations)
-
-        opening.save()
-        stat.created += 1
 
     def _display_stats(self):
         """Display stats for the scraping operation.
@@ -314,10 +325,10 @@ class Engine:
         if inactive_openings:
             log.debug(f'{len(inactive_openings)} openings have gone inactive ...')
             with connection.cursor() as cursor:
-                dml = "UPDATE jobs_openings SET date_inactive={0} WHERE id in ({1})"
+                dml = "UPDATE jobs_opening SET date_inactive='{0}' WHERE id in ({1})"
                 cursor.execute(dml.format(
                     datetime.today().date().isoformat(),
-                    ', '.join([o['id'] for o in inactive_openings])
+                    ', '.join([str(o['id']) for o in inactive_openings])
                 ))
 
     def _after_scrape(self):

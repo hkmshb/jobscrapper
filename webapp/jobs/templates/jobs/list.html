@@ -31,14 +31,15 @@
           </button>
         </p>
         <input type="hidden" id="is_spatial" name="is_spatial" value="{{ form.is_spatial.value }}">
+        <input type="hidden" id="include_inactive" name="include_inactive" value="{{ form.include_inactive.value }}">
       </div>
     </form>
   </div>
 {% endblock %}
 
 {% block content %}
-  <div class="pb-5" style="margin-top: -15px;">
-    <div class="is-narrow pb-5 is-pulled-right">
+  <div class="xpb-5" style="margin-top: -15px;">
+    <div class="is-narrow is-inline-block pr-5">
       <input
         id="is_spatial_ctrl"
         type="checkbox"
@@ -48,11 +49,23 @@
           checked="checked"
         {% endif %}
       >
-      <label for="is_spatial_ctrl">Enable Geospatial Search</label>
+      <label for="is_spatial_ctrl">Geospatial Search</label>
+    </div>
+    <div class="is-narrow is-inline-block">
+      <input
+        id="include_inactive_ctrl"
+        type="checkbox"
+        name="include_inactive_ctrl"
+        class="switch is-rounded is-info is-small"
+        {% if form.include_inactive.value %}
+          checked="checked"
+        {% endif %}
+      >
+      <label for="include_inactive_ctrl">Include Inactive</label>
     </div>
 
     {% if locations %}
-    <div class="is-pulled-left">
+    <div class="is-pulled-right is-inline-block is-size-7">
       <b>Matched Locations:</b> {% for loc in locations %} {{ loc.name }}; {% endfor %}
     </div>
     {% endif %}
@@ -129,12 +142,15 @@
   <script type="text/javascript">
     window.addEventListener("load", function() {
       var spatial_ctrl = $('#is_spatial_ctrl');
-      var locations = $('#locations');
+      var inactive_ctrl = $('#include_inactive_ctrl')
+      var inactive = $('#include_inactive');
       var spatial = $('#is_spatial');
+      var locations = $('#locations');
 
+      // bind click event for spatial switch if switch and location inputs exist
       if (spatial_ctrl.value[0] && locations.value[0]) {
         spatial_ctrl.on('click', function() {
-          var checked = spatial_ctrl.value[0].checked;
+          const checked = spatial_ctrl.value[0].checked;
           spatial.value[0].value = checked;
 
           if (checked) {
@@ -144,6 +160,14 @@
             $('#id_location').value[0].selectedIndex = 0;
           }
         });
+      }
+
+      // bind click event for include_inactive switch if found
+      if (inactive_ctrl.value[0]) {
+        inactive_ctrl.on('click', function() {
+          const checked = inactive_ctrl.value[0].checked;
+          inactive.value[0].value = checked;
+        })
       }
     });
   </script>

@@ -28,15 +28,19 @@ def opening_list(request: HttpRequest):
 
     q = data.get('q')
     is_spatial = data.get('is_spatial') or False
+    include_inactive = data.get('include_inactive') or False
 
     openings = Opening.objects.all()
+    if not include_inactive:
+        openings = openings.filter(date_inactive__isnull=True)
+
     if not is_spatial:
         # perform full-text search if term provided
         if q:
             openings = openings.filter(tsdocument=q)
     else:
         location = data.get('location')
-        if not q:
+        if not (q and location.geom):
             locations = [location]
         else:
             locations = Location.objects.filter(
