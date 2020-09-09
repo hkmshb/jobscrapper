@@ -2,6 +2,7 @@
 
 import datetime
 from django.db import migrations, models
+import django.contrib.gis.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -11,6 +12,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='location',
+            name='geom',
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326, verbose_name='GPS Coord'),
+        ),
         migrations.AddField(
             model_name='opening',
             name='entry_hash',

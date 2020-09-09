@@ -49,7 +49,7 @@ class Location(Entity):
     """Defineds fields for recording opening location details.
     """
     name = models.CharField(max_length=100, unique=True)
-    geom = gismodels.PointField('GPS Coord')
+    geom = gismodels.PointField('GPS Coord', null=True, blank=True)
 
     def __str__(self):
         """Returns string representation of the model.

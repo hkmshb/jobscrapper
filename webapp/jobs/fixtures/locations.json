@@ -2,7 +2,7 @@
   "model": "jobs.location",
   "pk": 1,
   "fields": {
-    "name": "Washington, DC, United States",
+    "name": "Washington, DC,United States",
     "geom": "SRID=4326;POINT (-77.05335124054 38.927727751923)"
   }
 }, {
