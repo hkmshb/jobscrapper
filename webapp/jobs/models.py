@@ -88,8 +88,10 @@ class Opening(Entity):
         :param data: details to match against this opening instance.
         :type data: dict
         """
-        exclude_list = ('id', 'company', 'last_processed')
         pattern = re.compile('date_*')
+        exclude_list = (
+            'id', 'company', 'locations', 'last_processed', 'entry_hash', 'tsdocument'
+        )
 
         field_names = list(filter(
             lambda f: f not in exclude_list and not pattern.match(f),

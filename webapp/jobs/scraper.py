@@ -7,9 +7,11 @@ import time
 from collections import namedtuple
 from dataclasses import dataclass
 from datetime import datetime
+from functools import reduce
 from urllib.parse import urljoin
 from typing import Dict, Iterable, List
 
+from django.db import connection
 from requests_html import Element, HTMLResponse, HTMLSession
 from jobs.models import Company, Location, Opening
 
@@ -29,8 +31,27 @@ ScrapResult = namedtuple('ScrapResult', ['company', 'job', 'scraper'])
 class Stats:
     created: int = 0
     failed: int = 0
-    updated: int = 0
     ignored: int = 0
+    updated: int = 0
+
+    def __add__(self, other):
+        return Stats(
+            created=self.created + other.created,
+            failed=self.failed + other.failed,
+            ignored=self.ignored + other.ignored,
+            updated=self.updated + other.updated,
+        )
+
+    def __str__(self):
+        return self.format(self)
+
+    @staticmethod
+    def format(stat):
+        return (
+            "created: {stat.created} / updated: {stat.updated} /" +
+            "ignored: {stat.ignored} / failed: {stat.failed}"
+        ).format(stat=stat)
+
 
 
 class SiteScraper:
@@ -49,7 +70,7 @@ class SiteScraper:
             return Location.objects.filter(name__in=location_names)
         return []
 
-    def scrap_vacancies(self) -> List[Job]:
+    def scrape_vacancies(self) -> List[Job]:
         raise NotImplementedError()
 
     def scrap_vacancy_details(self, company: Company, job: Job):
@@ -157,7 +178,7 @@ class WorldBankGroupScraper(SiteScraper):
             paging=self.get_pagination_details(res.html)
         )
 
-    def scrap_vacancies(self) -> List[Job]:
+    def scrape_vacancies(self) -> List[Job]:
         log.debug(f'processing page: {self.url} ...')
         res = self.session.get(self.url)
         res.raise_for_status()
@@ -220,8 +241,9 @@ class Engine:
         :type scrapers: List[Company]
         """
         self.companies = companies
+        self.known_openings = {}
 
-    def scrap_vacancies(self) -> Iterable[ScrapResult]:
+    def scrape_vacancies(self) -> Iterable[ScrapResult]:
         """Returns jobs scraped from vacancies urls for companies added to engine.
         """
         # find scrapable companies
@@ -234,7 +256,7 @@ class Engine:
 
             scraper_cls = self.scrapers[company.name_slug]
             scraper = scraper_cls(company.vacancies_url)
-            for job in scraper.scrap_vacancies():
+            for job in scraper.scrape_vacancies():
                 yield ScrapResult(company, job, scraper)
 
     def process_vacancy(self, result: ScrapResult):
@@ -243,10 +265,11 @@ class Engine:
         job_detail = scraper.scrap_vacancy_details(company, job)
         stat = self.stats[company.name_slug]
 
-        openings = Opening.objects.filter(entry_hash=result.job.hash)
-        if len(openings) == 1:
+        if result.job.hash in self.known_openings:
+            opening = Opening.objects.filter(entry_hash=result.job.hash).first()
+            self.known_openings[result.job.hash].update({ 'active': True })
+
             # check if job is to be updated
-            opening = openings.first()
             if not opening.is_match({ 'job': job_detail._asdict() }):
                 log.debug('Updating existing job ...')
                 opening.description = job_detail.description
@@ -269,13 +292,68 @@ class Engine:
         opening.save()
         stat.created += 1
 
+    def _display_stats(self):
+        """Display stats for the scraping operation.
+        """
+        # display stats for each company
+        for (id, stat) in self.stats.items():
+            log.debug(f"Stats ({id}) :: {stat}")
+
+        # display total status
+        total = reduce(lambda acc, item: acc + item, self.stats.values())
+        log.debug(f"Total :: {total}")
+
+    def _update_inactive_openings(self):
+        # idenfy known openings that are no longer active
+        inactive_openings = list(filter(
+            lambda value: 'active' not in value,
+            self.known_openings.values()
+        ))
+
+        log.debug(f'{len(self.known_openings)} active known openings ...')
+        if inactive_openings:
+            log.debug(f'{len(inactive_openings)} openings have gone inactive ...')
+            with connection.cursor() as cursor:
+                dml = "UPDATE jobs_openings SET date_inactive={0} WHERE id in ({1})"
+                cursor.execute(dml.format(
+                    datetime.today().date().isoformat(),
+                    ', '.join([o['id'] for o in inactive_openings])
+                ))
+
+    def _after_scrape(self):
+        """Performs a series of operations after the scrapping operation.
+        """
+        try:
+            self._update_inactive_openings()
+            self._display_stats()
+        except Exception as ex:
+            log.error(f"After scrape operation failed. Error: {ex}")
+
+    def _before_scrape(self):
+        """Performs a series of operation before the actual scrapping begins.
+        """
+        # compile hash of all known active openings
+        try:
+            fields = ('id', 'entry_hash')
+            openings = Opening.objects.filter(date_inactive__isnull=True).values(*fields)
+            for opening in openings:
+                self.known_openings.update({
+                    opening['entry_hash']: {'id': opening['id']}
+                })
+
+            log.debug(f'{len(opening)} known active openings found ...')
+        except Exception as ex:
+            log.error(f'Before scrape operation failed. Error: {ex}')
+
     def execute(self):
         """Initiates jobs scraping for added companies.
         """
         start_time = datetime.now()
         log.info(f"Scraping started ... at {start_time.strftime('%H:%M')}")
+        self._before_scrape()
+
         try:
-            for result in self.scrap_vacancies():
+            for result in self.scrape_vacancies():
                 try:
                     time.sleep(10)
                     self.process_vacancy(result)
@@ -292,6 +370,7 @@ class Engine:
             finish_time = datetime.now()
             op = 'aborted'
 
+        self._after_scrape()
         log.info(
             f"Scraping {op} at {finish_time.strftime('%H:%M')} " +
             f"(duration: {str(finish_time - start_time)})"
