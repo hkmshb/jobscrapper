@@ -227,7 +227,7 @@ class WorldBankGroupScraper(SiteScraper):
             entry_hash=job.hash,
             company=company,
             date_active=datetime.today(),
-            description=desc.text,
+            description=desc.raw_html.decode('utf-8'),
             locations=locations,
             role_title=role_title,
             url=job_url,

@@ -22,7 +22,7 @@
             {% if is_url %}
               <td><a target="_blank" href="{{ value }}">{{ value }}</a></td>
             {% else %}
-              <td>{{ value | default_if_none:'-' }}</td>
+              <td>{{ value | default_if_none:'-' | safe }}</td>
             {% endif %}
           </tr>
         {% endfor %}
