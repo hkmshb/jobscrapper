@@ -1,5 +1,23 @@
 # CHANGE LOG
 
+## 2020.09.92
+
+- Implement scraper for World Bank Group vacancies page
+- Implement engine for coordinating scraping operations to support creating new openings, updating
+  details for existing openings with changes in their published contents, and updating `date_inactive`
+  for openings that no longer exist on vacancies lising.
+- Update the openings listing page to show only active openings, these are openings with the
+  `date_inactive` field set to null.
+- Add support to include inactive openings on the listing page
+- Adjust cron job to run every 12 hours
+- Refactored models and associated migrations to add `entry_hash` and remore `last_processed`
+  fields for the `Opening` model, and make `geom` field for `Location` nullable.
+- Update the `loadsample` command for the `entrypoint.sh` bash scripts to support the under listed
+  options:
+  - *--companies* : loads sample companies and locations data
+  - *--openings*  : loads sample openings data
+  - when no option is provided, all sample data (companies, locations and openings) are loaded
+
 ## 2020.08.21
 
 - Added `core` app with custom user and some other models
