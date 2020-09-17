@@ -20,7 +20,7 @@ class Command(BaseCommand):
         ignoring the update freq settings
     """
 
-    help = 'Scrap job openings from job listing pages of register companies'
+    help = 'Scrape job openings from job listing pages of register companies'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -45,13 +45,6 @@ class Command(BaseCommand):
             default=False,
             help='indicates whether to ignore update frequency settings for companies'
         )
-
-    def should_scrape(self, company: Company, freq_unit: str):
-        """Determines whether to scrape company based on configured update frequency
-
-        :param company: the company whose vacancies are to be scraped
-        :type company: Company
-        """
 
     def allow_scraping(
         self,
@@ -111,6 +104,11 @@ class Command(BaseCommand):
 
         ref = 'company' if len(companies) == 1 else 'companies'
         self.stdout.write(f'scraper:: {len(companies)} {ref} up for scraping')
+
+        if companies:
+            self.stdout.write(f"companies: {', '.join([c.name for c in companies])}")
+            self.stdout.write('=' * 35)
+            self.stdout.write('')
 
         # run scraping engine for identified companies
         engine = Engine(companies)

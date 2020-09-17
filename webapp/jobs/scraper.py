@@ -84,8 +84,119 @@ class SiteScraper:
     def scrape_vacancies(self) -> List[Job]:
         raise NotImplementedError()
 
-    def scrap_vacancy_details(self, company: Company, job: Job):
+    def scrape_vacancy_details(self, company: Company, job: Job):
         raise NotImplementedError()
+
+
+class SequoiaScraper(SiteScraper):
+    """Scraper for the Sequoia careers page.
+    """
+    ID = 'sequoai'
+
+    def __init__(self, url: str):
+        self.url = url
+        self.session = HTMLSession()
+
+    def get_jobs(self, page: Element, page_no: str) -> List[Job]:
+        rows = [
+            {
+                'job_id': '1479769',
+                'title': 'Operations Manager - 2nd Shift',
+                'location': 'Fontana, CA, US'
+            },
+            {
+                'job_id': '1470584',
+                'title': 'Store Manager',
+                'location': 'Torrance, CA, US'
+            },
+            {
+                'job_id': '1461859',
+                'title': 'Store Manager',
+                'location': 'Chino, CA, US'
+            },
+            {
+                'job_id': '1479761',
+                'title': 'Business Analyst',
+                'location': 'Remote'
+            },
+            {
+                'job_id': '1479759',
+                'title': 'Logistics Manager',
+                'location': 'Multiple Locations'
+            },
+            {
+                'job_id': '1479757',
+                'title': 'Telehealth Licensed Clinical Social Worker',
+                'location': 'Multiple Locations'
+            },
+            {
+                'job_id': '1461842',
+                'title': 'Senior Manager, Financial Reporting',
+                'location': 'Remote'
+            },
+            {
+                'job_id': '1051516',
+                'title': 'Senior Software Engineer',
+                'location': 'Hong Kong'
+            }
+        ]
+
+        jobs: List[Job] = []
+        for row in rows:
+            text = f"{row['title']}::{row['location']}"
+            text_hash = hashlib.sha256(text.encode('utf-8'))
+
+            jobs.append(Job(**{
+                'page_no': page_no,
+                'hash': text_hash.hexdigest(),
+                'data': {
+                    'id': row['job_id'],
+                    'title': row['title'],
+                    'href': urljoin(f'{self.url}/', row['job_id']),
+                    'location': row['location']
+                }
+            }))
+
+        return jobs
+
+    def scrape_vacancies(self) -> List[Job]:
+        log.debug(f'processing page: {self.url} ...')
+
+        jobs = self.get_jobs(None, '1')
+        log.debug(f'{len(jobs)} job(s) extracted ...')
+        return jobs
+
+    def scrape_vacancy_details(self, company: Company, job: Job) -> JobDetail:
+        session = HTMLSession()
+        job_url = job.data['href']
+        res = session.get(job_url)
+        res.raise_for_status()
+
+        # extract page contents
+        content = res.html.find('.job._content', first=True)
+        desc = content.find('.job._job-description', first=True)
+        header = content.find('.job._job-desc-title', first=True)
+        role_title = f"{header.text} | {job.data['id']}"
+
+        locations_data = content.find('div')[1]
+        location_names = locations_data.text.split('\n')
+
+        is_remote = 'Remote' in location_names
+        locations = self.get_locations(list(filter(
+            lambda val: val and val != 'Remote',
+            location_names
+        )))
+
+        return JobDetail(
+            entry_hash=job.hash,
+            company=company,
+            date_active=datetime.today(),
+            description=desc.raw_html.decode('utf-8'),
+            locations=locations,
+            role_title=role_title,
+            url=job_url,
+            is_remote=is_remote
+        )
 
 
 class WorldBankGroupScraper(SiteScraper):
@@ -204,7 +315,7 @@ class WorldBankGroupScraper(SiteScraper):
         log.debug(f'{len(jobs)} job(s) extracted ...')
         return jobs
 
-    def scrap_vacancy_details(self, company: Company, job: Job) -> JobDetail:
+    def scrape_vacancy_details(self, company: Company, job: Job) -> JobDetail:
         session = HTMLSession()
         job_url = urljoin(self.url, job.data['href'])
         res = session.get(job_url)
@@ -238,11 +349,13 @@ class Engine:
     """Engine to coordinate scraping activities.
     """
     scrapers = {
-        WorldBankGroupScraper.ID: WorldBankGroupScraper
+        WorldBankGroupScraper.ID: WorldBankGroupScraper,
+        SequoiaScraper.ID: SequoiaScraper,
     }
 
     stats = {
-        WorldBankGroupScraper.ID: Stats(created=0, failed=0, updated=0, ignored=0)
+        scraper_id: Stats(created=0, failed=0, updated=0, ignored=0)
+        for scraper_id in scrapers.keys()
     }
 
     def __init__(self, companies: List[Company]):
@@ -273,7 +386,7 @@ class Engine:
     def process_vacancy(self, result: ScrapResult):
         # scrap job details
         (company, job, scraper) = result
-        job_detail = scraper.scrap_vacancy_details(company, job)
+        job_detail = scraper.scrape_vacancy_details(company, job)
         stat = self.stats[company.name_slug]
 
         if result.job.hash in self.known_openings:
@@ -284,6 +397,7 @@ class Engine:
             if not opening.is_match({ 'job': job_detail._asdict() }):
                 log.debug('Updating existing job ...')
                 opening.description = job_detail.description
+                opening.role_title = job_detail.role_title
                 opening.save()
                 stat.updated += 1
                 return
@@ -352,7 +466,7 @@ class Engine:
                     opening['entry_hash']: {'id': opening['id']}
                 })
 
-            log.debug(f'{len(opening)} known active openings found ...')
+            log.debug(f'{len(openings)} known active openings found ...')
         except Exception as ex:
             log.error(f'Before scrape operation failed. Error: {ex}')
 
