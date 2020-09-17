@@ -12,7 +12,7 @@ from urllib.parse import urljoin
 from typing import Dict, Iterable, List
 
 from django.db import connection
-from requests_html import Element, HTMLResponse, HTMLSession
+from requests_html import AsyncHTMLSession, Element, HTMLResponse, HTMLSession
 from jobs.models import Company, Location, Opening
 
 
@@ -91,13 +91,15 @@ class SiteScraper:
 class SequoiaScraper(SiteScraper):
     """Scraper for the Sequoia careers page.
     """
+    ASYNC = True
     ID = 'sequoai'
+    JS_RENDER_WAIT = 5  # seconds
 
     def __init__(self, url: str):
         self.url = url
         self.session = HTMLSession()
 
-    def get_jobs(self, page: Element, page_no: str) -> List[Job]:
+    def _x_get_jobs(self, page: Element, page_no: str) -> List[Job]:
         rows = [
             {
                 'job_id': '1479769',
@@ -159,10 +161,57 @@ class SequoiaScraper(SiteScraper):
 
         return jobs
 
+    def _get_jobs(self, section: Element, page_no: str) -> List[Job]:
+        """Returns job postings within a company section
+
+        :param section: html content to proces to extract jobs.
+        :type section: Element
+        :param page_no: the section part being processed
+        :type page_no: str
+        :return: list of jobs
+        :rtype: List[Job]
+        """
+        jobs: List[Job] = []
+
+        company = section.find('span', first=True)
+        content = section.find('ul.jobs._list', first=True)
+
+        rows = [] if not content else content.find('li > a')
+        for row in rows:
+            title_parts = row.text.split('\n')
+
+            text = '::'.join(title_parts)
+            text_hash = hashlib.sha256(text.encode('utf-8'))
+
+            jobs.append(Job(**{
+                'page_no': page_no,
+                'hash': text_hash.hexdigest(),
+                'data': {
+                    'company_name': company.text if company else '',
+                    'title': ' | '.join(title_parts),
+                    'href': urljoin(self.url, row.attrs['href']),
+                    'location': None if len(title_parts) == 1 else title_parts[1],
+                    'deadline': None,
+                }
+            }))
+
+        return jobs
+
+    def _read_sections(self):
+        res = self.session.get(self.url)
+        res.raise_for_status()
+
+        res.html.render(wait=self.JS_RENDER_WAIT)
+        contents = res.html.find('.jobs._company')
+        return contents or []
+
     def scrape_vacancies(self) -> List[Job]:
         log.debug(f'processing page: {self.url} ...')
 
-        jobs = self.get_jobs(None, '1')
+        jobs: List[Job] = []
+        for section in self._read_sections():
+            jobs.extend(self._get_jobs(section, '1'))
+
         log.debug(f'{len(jobs)} job(s) extracted ...')
         return jobs
 
@@ -202,6 +251,7 @@ class SequoiaScraper(SiteScraper):
 class WorldBankGroupScraper(SiteScraper):
     """Scraper for the World Bank Group careers page.
     """
+    ASYNC = False
     ID = 'world-bank-group'
     VIEW_FIELDS = ['__VIEWSTATE', '__VIEWSTATEGENERATOR']
     FORM_DATA = {
