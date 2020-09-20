@@ -7,6 +7,8 @@ networks:
 volumes:
   database_data:
     name: djpgp-database_data
+  chromium_bin:
+    name: djpgp-chromium_bin
 
 services:
 
@@ -42,6 +44,7 @@ services:
     image: djpgp-webapp
     volumes:
       - ./webapp:/app/webapp
+      - chromium_bin:/root/.local/share/pyppeteer
     env_file: .env
     depends_on:
       - database
