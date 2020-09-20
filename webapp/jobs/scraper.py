@@ -94,6 +94,7 @@ class SequoiaScraper(SiteScraper):
     ASYNC = True
     ID = 'sequoai'
     JS_RENDER_WAIT = 5  # seconds
+    JS_RENDER_TIMEOUT = 30 # seconds
 
     def __init__(self, url: str):
         self.url = url
@@ -201,8 +202,9 @@ class SequoiaScraper(SiteScraper):
         res = self.session.get(self.url)
         res.raise_for_status()
 
-        res.html.render(wait=self.JS_RENDER_WAIT)
+        res.html.render(wait=self.JS_RENDER_WAIT, timeout=self.JS_RENDER_TIMEOUT)
         contents = res.html.find('.jobs._company')
+        log.debug(f'{len(contents)} contents found ...')
         return contents or []
 
     def scrape_vacancies(self) -> List[Job]:
