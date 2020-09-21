@@ -100,68 +100,6 @@ class SequoiaScraper(SiteScraper):
         self.url = url
         self.session = HTMLSession()
 
-    def _x_get_jobs(self, page: Element, page_no: str) -> List[Job]:
-        rows = [
-            {
-                'job_id': '1479769',
-                'title': 'Operations Manager - 2nd Shift',
-                'location': 'Fontana, CA, US'
-            },
-            {
-                'job_id': '1470584',
-                'title': 'Store Manager',
-                'location': 'Torrance, CA, US'
-            },
-            {
-                'job_id': '1461859',
-                'title': 'Store Manager',
-                'location': 'Chino, CA, US'
-            },
-            {
-                'job_id': '1479761',
-                'title': 'Business Analyst',
-                'location': 'Remote'
-            },
-            {
-                'job_id': '1479759',
-                'title': 'Logistics Manager',
-                'location': 'Multiple Locations'
-            },
-            {
-                'job_id': '1479757',
-                'title': 'Telehealth Licensed Clinical Social Worker',
-                'location': 'Multiple Locations'
-            },
-            {
-                'job_id': '1461842',
-                'title': 'Senior Manager, Financial Reporting',
-                'location': 'Remote'
-            },
-            {
-                'job_id': '1051516',
-                'title': 'Senior Software Engineer',
-                'location': 'Hong Kong'
-            }
-        ]
-
-        jobs: List[Job] = []
-        for row in rows:
-            text = f"{row['title']}::{row['location']}"
-            text_hash = hashlib.sha256(text.encode('utf-8'))
-
-            jobs.append(Job(**{
-                'page_no': page_no,
-                'hash': text_hash.hexdigest(),
-                'data': {
-                    'id': row['job_id'],
-                    'title': row['title'],
-                    'href': urljoin(f'{self.url}/', row['job_id']),
-                    'location': row['location']
-                }
-            }))
-
-        return jobs
-
     def _get_jobs(self, section: Element, page_no: str) -> List[Job]:
         """Returns job postings within a company section
 
@@ -491,10 +429,14 @@ class Engine:
         if inactive_openings:
             log.debug(f'{len(inactive_openings)} openings have gone inactive ...')
             with connection.cursor() as cursor:
-                dml = "UPDATE jobs_opening SET date_inactive='{0}' WHERE id in ({1})"
+                dml = (
+                    "UPDATE jobs_opening SET date_inactive='{0}' "
+                    "WHERE id in ({1}) AND company_id in ({2});"
+                )
                 cursor.execute(dml.format(
                     datetime.today().date().isoformat(),
-                    ', '.join([str(o['id']) for o in inactive_openings])
+                    ', '.join([str(o['id']) for o in inactive_openings]),
+                    ', '.join([str(c.id) for c in self.companies])
                 ))
 
     def _after_scrape(self):
