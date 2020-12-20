@@ -1,4 +1,4 @@
-# How-To :: Docker
+# Docker Setup
 
 All `docker-compose` commands illustrated in this document are expected to be executed from
 within the project root directory on the command line interface (aka cli, shell). This is the
@@ -18,14 +18,14 @@ webapp:
     ...
 ```
 
-To use the original `Dockerfile` update the dockerfile entry to `dockerile: Dockerfile`.
+To use the original `Dockerfile` update the dockerfile entry to `dockerfile: Dockerfile`.
 Whenever such changes occur, the **webapp** must be rebuilt as docker files may differ in the
 base images used or some other ways. No matter how trivial the difference though, a rebuild
 is necessary.
 
 ```bash
 # rebuild by using the build with the --no-cache flag. this is important and indicates that
-# a clean, fresh build should be conducted without any parts/portions of previous buils being
+# a clean, fresh build should be conducted without any parts/portions of previous builds being
 # reused. The --no-cache flag is necessary as Docker caches step in its build process for
 # reuse in subsequent builds.
 docker-compose build --no-cache webapp
@@ -188,4 +188,4 @@ Thus whenever the `database` service is being started and new database data file
 `create_db.sh` script (on host system) mounted into the container with the new name `pg_create_db.sh` is
 executed. Note that multiple files can be mounted into this location, and only files having the `.sh`
 and `.sql` file extensions will be executed when the necessary conditions are meet. The files will be
-executed by the alphabetic order of thier names.
+executed by the alphabetic order of their names.

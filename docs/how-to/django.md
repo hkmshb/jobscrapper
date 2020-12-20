@@ -1,4 +1,4 @@
-# How-To :: Django
+# Django Setup
 
 All commands illustrated in this document are expected to be executed from within the project
 root directory on the command line interface (aka cli, shell). This is the folder directly
@@ -46,7 +46,7 @@ To begin, rename the `.env` file to `.env.sh` and add the `export` command befor
 variable in the file, eg:
 
 ```ini
-  # previos content
+  # previous content
   DJAPP_DBUSER=<name>
   ...
 
@@ -80,7 +80,7 @@ manage spatial data. For this project this is not an option.
 
 #### Using Docker database
 
-The PostgreSQL + PostGIS databse configure with the compose file can be started and connected to
+The PostgreSQL + PostGIS database configure with the compose file can be started and connected to
 from the Django application running from the host system.
 
 ```ini
@@ -112,7 +112,7 @@ python3 -m venv .venv
 # install python dependencies for the project
 (.venv) pip install -r requirements.txt
 
-# export all environment variabels into the shell
+# export all environment variables into the shell
 (.venv) source .env.sh
 
 # run the application
