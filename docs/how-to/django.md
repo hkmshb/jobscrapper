@@ -7,7 +7,7 @@ other files.
 
 ---
 
-## Table of contents
+## Document Outline
 
 - [Run Application](#run-application)
   - [Using Docker](#using-docker)

@@ -33,7 +33,7 @@ docker-compose build --no-cache webapp
 
 ---
 
-## Table of contents
+## Document Outline
 
 - [Build images](#build-images)
 - [Run images as containers](#run-images-as-containers)
