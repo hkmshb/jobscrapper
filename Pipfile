@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 parameterized = "*"
+sphinx = "*"
+recommonmark = "*"
 
 [packages]
 django = "==3.0.8"
