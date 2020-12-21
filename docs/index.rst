@@ -22,3 +22,14 @@ and outside of Docker together with general descriptions/instructions of working
    how-to/django
    how-to/docker
    how-to/scraper
+
+The API Documentation / Guide
+-----------------------------
+
+This part of the documentation provides information on specific function, class or method defined
+and used to piece together the functionalities/features of the scraper.
+
+.. toctree::
+   :maxdepth: 2
+
+   api
