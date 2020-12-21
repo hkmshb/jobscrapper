@@ -1,0 +1,29 @@
+## The base image to build the new image from. This is an Debian linux image
+## with Python version 3.8 already installed.
+FROM djpgp-webapp
+
+LABEL maintainer="Abdul-Hakeem <hkmshb@gmail.com>"
+
+## Copy and embed Pipenv generated Pipfile and Pipfile.lock which contain list of
+## dependencies for the project and the webapp folder into the image all inside
+## the `/app` folder of the image.
+COPY Pipfile Pipfile.lock /app/
+COPY ./webapp /app/webapp
+COPY ./docs /app/docs
+
+## set up working directory within the container
+WORKDIR /app/docs
+
+## Update pip, then install all Python dependencies for the application into
+## the image using the requirements.txt file within the image.
+RUN pip install --upgrade pip &&\
+    pip install pipenv &&\
+    # --system --deploy tells pipenv to install packages directly in the container's
+    # system python rather than creating a virtualenv and installing packages into
+    # the virtualenv
+    pipenv install --system --deploy --dev
+
+COPY ./scripts/entrypoint.docs.sh  /app/entrypoint.docs.sh
+
+## change the entrypoint script
+ENTRYPOINT [ "/app/entrypoint.docs.sh" ]
