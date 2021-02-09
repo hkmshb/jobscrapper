@@ -1,7 +1,7 @@
-# Django App
+# Job Scrapper
 
-This repository contains a setup for Django with a PostgreSQL + PostGIS database
-for data storage.
+A job scrapper with a management interface built in Django, and containerized with Docker
+for easy deployment.
 
 ---
 
